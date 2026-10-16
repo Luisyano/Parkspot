@@ -1,0 +1,407 @@
+* {
+  box-sizing: border-box;
+}
+
+.detalle-container {
+  min-height: 100vh;
+  background: var(--page);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  padding: 30px 24px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: var(--navy);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+.sede {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.06);
+}
+
+.imagen-sede {
+  min-height: 400px;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagen-sede span {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--card);
+  color: var(--navy);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.informacion {
+  padding: 32px 36px;
+}
+
+.informacion h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.ubicacion {
+  color: var(--ink-3);
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.descripcion {
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: 16px 0 24px;
+  font-size: 14px;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+}
+
+.datos div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.datos strong {
+  font-size: 22px;
+  color: var(--navy);
+}
+
+.datos span {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.horarios {
+  margin-top: 24px;
+}
+
+.horarios h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.horario-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.horario-lista span {
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.btn-reservar {
+  width: 100%;
+  margin-top: 28px;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-reservar:hover {
+  background: var(--accent-dark);
+}
+
+/* =========================
+   ESPACIOS POR PISO
+========================= */
+
+.espacios {
+  margin-top: 40px;
+}
+
+.espacios h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.piso-section {
+  margin-bottom: 24px;
+}
+
+.piso-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--line);
+}
+
+.espacios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.espacio-card {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  border: 2px solid var(--line);
+  transition: transform 0.2s;
+}
+
+.espacio-card:hover {
+  transform: scale(1.05);
+}
+
+.espacio-card.badge-available {
+  border-color: var(--available);
+  background: var(--available-bg);
+}
+
+.espacio-card.badge-reserved {
+  border-color: var(--reserved);
+  background: var(--reserved-bg);
+}
+
+.espacio-card.badge-occupied {
+  border-color: var(--occupied);
+  background: var(--occupied-bg);
+}
+
+.espacio-card.badge-neutral {
+  border-color: var(--maintenance);
+  background: var(--maintenance-bg);
+}
+
+.espacio-codigo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.espacio-icono {
+  font-size: 18px;
+  margin: 4px 0;
+}
+
+.espacio-estado {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.espacio-card.badge-available .espacio-estado {
+  color: var(--available);
+}
+.espacio-card.badge-reserved .espacio-estado {
+  color: var(--reserved);
+}
+.espacio-card.badge-occupied .espacio-estado {
+  color: var(--occupied);
+}
+
+/* =========================
+   SERVICIOS
+========================= */
+
+.servicios {
+  margin-top: 40px;
+}
+
+.servicios h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+
+.servicios-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.servicio {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.06);
+  text-align: center;
+}
+
+.servicio span {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.servicio h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.servicio p {
+  color: var(--ink-3);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================
+   LOADING / ERROR
+========================= */
+
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loading-state i {
+  font-size: 40px;
+  color: var(--navy);
+  animation: spin 1s linear infinite;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.loading-state p {
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--occupied-bg);
+  border-radius: 12px;
+  border: 1px solid var(--occupied);
+}
+
+.error-state i {
+  font-size: 32px;
+  color: var(--occupied);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.error-state p {
+  color: var(--occupied);
+  font-size: 14px;
+}
+
+.volver-btn {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.volver-btn:hover {
+  background: var(--accent-dark);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .sede {
+    grid-template-columns: 1fr;
+  }
+
+  .imagen-sede {
+    min-height: 200px;
+  }
+
+  .servicios-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .datos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .detalle-container {
+    padding: 16px;
+  }
+
+  .informacion {
+    padding: 20px;
+  }
+
+  .informacion h1 {
+    font-size: 22px;
+  }
+
+  .datos {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .servicios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .espacios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  }
+}

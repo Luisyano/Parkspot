@@ -1,0 +1,92 @@
+<section class="registro-page">
+
+  <div class="frame">
+
+    <div class="pad">
+
+      <!-- ✅ Mensaje de error mejorado -->
+      <div *ngIf="errorMensaje" class="error-mensaje">
+        <i class="ti ti-alert-circle"></i>
+        <span>{{ errorMensaje }}</span>
+      </div>
+
+      <div class="grid grid-2 datos-personales">
+        <div>
+          <label class="small">Nombres</label>
+          <input
+            type="text"
+            [(ngModel)]="nombres"
+            placeholder="Mateo">
+        </div>
+        <div>
+          <label class="small">Apellidos</label>
+          <input
+            type="text"
+            [(ngModel)]="apellidos"
+            placeholder="Gutierrez Paz">
+        </div>
+      </div>
+
+      <label class="small">Correo electrónico</label>
+      <input
+        type="email"
+        [(ngModel)]="email"
+        placeholder="nombre@correo.com"
+        class="input-margin">
+
+      <label class="small">Celular</label>
+      <input
+        type="text"
+        [(ngModel)]="celular"
+        placeholder="+51 987 654 321"
+        class="input-margin">
+
+      <div class="grid grid-2 datos-personales">
+        <div>
+          <label class="small">Contraseña</label>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            placeholder="••••••••••">
+        </div>
+        <div>
+          <label class="small">Confirmar contraseña</label>
+          <input
+            type="password"
+            [(ngModel)]="confirmPassword"
+            placeholder="••••••••••">
+        </div>
+      </div>
+
+      <div class="password-info">
+        <i class="ti ti-check"></i>
+        Mínimo 8 caracteres, una mayúscula y un número
+      </div>
+
+      <div class="terms">
+        <input type="checkbox" [(ngModel)]="aceptaTerminos">
+        <span>
+          Acepto los Términos y Condiciones y la
+          Política de Privacidad
+        </span>
+      </div>
+
+      <button
+        type="button"
+        class="btn-register"
+        (click)="registrar()"
+        [disabled]="cargando"
+      >
+        {{ cargando ? 'Registrando...' : 'Registrarme' }}
+      </button>
+
+      <!-- ✅ Enlace a login -->
+      <div class="login-link">
+        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

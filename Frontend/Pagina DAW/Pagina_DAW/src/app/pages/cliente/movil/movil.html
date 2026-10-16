@@ -1,0 +1,98 @@
+<main class="movil-container">
+
+  <section class="titulo">
+    <h1>Mis vehículos</h1>
+    <p>Gestiona los vehículos asociados a tu cuenta.</p>
+  </section>
+
+  <div *ngIf="errorMensaje" class="error-mensaje">
+    <i class="ti ti-alert-circle"></i>
+    <span>{{ errorMensaje }}</span>
+  </div>
+
+  <div *ngIf="mensajeExito" class="exito-mensaje">
+    <i class="ti ti-check-circle"></i>
+    <span>{{ mensajeExito }}</span>
+  </div>
+
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando vehículos...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="vehiculos-lista">
+
+    <div *ngIf="vehiculos.length === 0" class="vehiculo-card empty">
+      <i class="ti ti-car-off"></i>
+      <div>
+        <h3>Sin vehículos</h3>
+        <p>Agrega tu primer vehículo</p>
+      </div>
+    </div>
+
+    <!-- ✅ trackBy: trackByVehiculo -->
+    <article *ngFor="let v of vehiculos; trackBy: trackByVehiculo" class="vehiculo-card">
+      <div class="vehiculo-icono">{{ getIconoVehiculo(v.tipo) }}</div>
+      <div class="vehiculo-info">
+        <h3>{{ v.placa }}</h3>
+        <p>{{ v.tipo }} · {{ v.modelo }}</p>
+      </div>
+      <div class="vehiculo-acciones">
+        <button class="btn-editar" (click)="editarVehiculo(v)">Editar</button>
+        <button class="btn-eliminar" (click)="eliminarVehiculo(v.id, v.placa)">Eliminar</button>
+      </div>
+    </article>
+
+  </div>
+
+  <button class="btn-agregar" 
+          (click)="abrirAgregar()" 
+          [disabled]="tieneLimiteAlcanzado">
+    + Agregar vehículo
+  </button>
+
+  <div class="info-adicional">
+    <p class="kicker">Máximo 5 vehículos por cuenta</p>
+  </div>
+
+  <div *ngIf="formularioVisible" class="formulario-overlay">
+    <div class="formulario-modal">
+      <div class="formulario-header">
+        <h2>{{ vehiculoEditando ? 'Editar vehículo' : 'Agregar vehículo' }}</h2>
+        <button class="btn-cerrar-form" (click)="cancelarFormulario()">✕</button>
+      </div>
+
+      <div class="formulario-body">
+        <div class="campo-form">
+          <label>Placa *</label>
+          <input type="text" [(ngModel)]="formPlaca" placeholder="ABC-123" maxlength="10">
+        </div>
+
+        <div class="campo-form">
+          <label>Modelo *</label>
+          <input type="text" [(ngModel)]="formModelo" placeholder="Toyota Yaris">
+        </div>
+
+        <div class="campo-form">
+          <label>Tipo</label>
+          <div class="tipo-selector">
+            <button class="tipo-btn" [class.active]="formTipo === 'AUTO'" (click)="formTipo = 'AUTO'">
+              🚗 Auto
+            </button>
+            <button class="tipo-btn" [class.active]="formTipo === 'MOTO'" (click)="formTipo = 'MOTO'">
+              🏍️ Moto
+            </button>
+          </div>
+        </div>
+
+        <div class="formulario-acciones">
+          <button class="btn-guardar" (click)="guardarVehiculo()" [disabled]="procesando">
+            {{ procesando ? 'Guardando...' : (vehiculoEditando ? 'Actualizar' : 'Guardar') }}
+          </button>
+          <button class="btn-cancelar" (click)="cancelarFormulario()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>

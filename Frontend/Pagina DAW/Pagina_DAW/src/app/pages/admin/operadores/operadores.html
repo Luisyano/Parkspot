@@ -1,0 +1,169 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando operadores...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <div class="frame">
+      <div class="content-inner">
+
+        <!-- TOOLBAR -->
+        <div class="table-toolbar">
+
+          <div class="filters">
+            <select [(ngModel)]="filtroSede">
+              <option value="TODAS">Todas las sedes</option>
+              <option *ngFor="let s of sedes" [value]="s.id">{{ s.nombre }}</option>
+            </select>
+
+            <select [(ngModel)]="filtroEstado">
+              <option value="TODOS">Todos</option>
+              <option value="ACTIVO">Activos</option>
+              <option value="SIN_ASIGNAR">Sin asignar</option>
+            </select>
+          </div>
+
+          <button class="btn btn-accent" (click)="abrirModalCrear()">
+            <i class="ti ti-plus"></i> Nuevo operador
+          </button>
+
+        </div>
+
+        <!-- TABLA -->
+        <table>
+          <thead>
+            <tr>
+              <th>Operador</th>
+              <th>Email</th>
+              <th>Sede asignada</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let op of operadoresFiltrados">
+              <td>
+                <div class="cell-user">
+                  <div class="avatar">{{ getIniciales(op) }}</div>
+                  <div>
+                    <div class="cell-main">{{ op.nombres }} {{ op.apellidos }}</div>
+                    <div class="cell-sub">{{ op.celular || '—' }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="cell-email">{{ op.email }}</td>
+              <td>{{ getNombreSede(op.sedeId) }}</td>
+              <td>
+                <span class="badge" [ngClass]="getBadgeClass(op)">
+                  {{ getBadgeText(op) }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="icon-btn" (click)="abrirModalEditar(op)" title="Editar">
+                  <i class="ti ti-edit"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="operadoresFiltrados.length === 0">
+              <td colspan="5" class="empty-msg">
+                No hay operadores que coincidan con los filtros.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>
+
+<!-- ============================================
+     MODAL CREAR / EDITAR
+     ============================================ -->
+<div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>{{ modoEdicion ? 'Editar operador' : 'Nuevo operador' }}</h3>
+      <button class="close-btn" (click)="cerrarModal()">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-row2">
+        <div class="form-group">
+          <label>Nombres *</label>
+          <input type="text"
+                 [(ngModel)]="operadorForm.nombres"
+                 placeholder="Ej: Carlos">
+        </div>
+
+        <div class="form-group">
+          <label>Apellidos *</label>
+          <input type="text"
+                 [(ngModel)]="operadorForm.apellidos"
+                 placeholder="Ej: Pérez">
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="!modoEdicion">
+        <label>Email *</label>
+        <input type="email"
+               [(ngModel)]="operadorForm.email"
+               placeholder="Ej: operador@parkspot.pe">
+      </div>
+
+      <div class="form-group" *ngIf="!modoEdicion">
+        <label>Contraseña *</label>
+        <input type="password"
+               [(ngModel)]="operadorForm.password"
+               placeholder="Mínimo 6 caracteres">
+      </div>
+
+      <div class="form-row2">
+        <div class="form-group">
+          <label>Celular</label>
+          <input type="text"
+                 [(ngModel)]="operadorForm.celular"
+                 placeholder="Ej: 987654321">
+        </div>
+
+        <div class="form-group">
+          <label>Sede asignada *</label>
+          <select [(ngModel)]="operadorForm.sedeId">
+            <option [ngValue]="null">— Seleccionar —</option>
+            <option *ngFor="let s of sedes" [ngValue]="s.id">{{ s.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="cerrarModal()" [disabled]="procesando">
+        Cancelar
+      </button>
+      <button class="btn btn-accent" (click)="guardar()" [disabled]="procesando">
+        <i class="ti" [ngClass]="procesando ? 'ti-loader-2' : 'ti-check'"></i>
+        {{ procesando ? 'Guardando...' : (modoEdicion ? 'Guardar cambios' : 'Crear operador') }}
+      </button>
+    </div>
+
+  </div>
+</div>

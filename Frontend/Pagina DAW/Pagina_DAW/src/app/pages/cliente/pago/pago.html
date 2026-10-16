@@ -1,0 +1,165 @@
+<main class="pago-container">
+
+  <div class="stepbar">
+    <div class="left">
+      <i class="ti ti-chevron-left" routerLink="/cliente/reserva"></i>
+      3. Resumen y pago
+    </div>
+    <div class="timer">
+      <i class="ti ti-clock"></i>
+      04:39
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Mensaje de error/éxito -->
+  <div *ngIf="errorMensaje" class="error-mensaje">
+    <i class="ti ti-alert-circle"></i>
+    <span>{{ errorMensaje }}</span>
+  </div>
+  <div *ngIf="mensajeExito" class="exito-mensaje">
+    <i class="ti ti-check-circle"></i>
+    <span>{{ mensajeExito }}</span>
+  </div>
+
+  <div *ngIf="!cargando" class="pago-grid">
+
+    <!-- Resumen de la reserva -->
+    <section class="card resumen">
+      <h2>Resumen de reserva</h2>
+
+      <div class="resumen-linea">
+        <span>Espacio</span>
+        <strong>{{ espacio?.codigo || '—' }}</strong>
+      </div>
+
+      <div class="resumen-linea">
+        <span>Modalidad</span>
+        <span class="badge badge-info">
+          <i class="ti ti-clock-hour-4"></i>
+          {{ getNombrePlan(plan?.nombre || 'POR_HORA') }}
+        </span>
+      </div>
+
+      <div class="resumen-linea">
+        <span>Vehículo</span>
+        <strong>{{ vehiculo?.placa || '—' }}</strong>
+      </div>
+
+      <div class="resumen-linea">
+        <span>Tipo de espacio</span>
+        <strong>{{ getTipoEspacio(espacio?.tipo || 'REGULAR') }}</strong>
+      </div>
+
+      <div class="separador"></div>
+
+      <div class="resumen-linea">
+        <span>Tarifa base</span>
+        <span>S/ {{ (total || 0).toFixed(2) }}</span>
+      </div>
+
+      <div class="resumen-linea">
+        <span>Servicio en línea</span>
+        <span>S/ 1.00</span>
+      </div>
+
+      <div class="total">
+        <span>Total</span>
+        <strong>S/ {{ (total + 1).toFixed(2) }}</strong>
+      </div>
+    </section>
+
+    <!-- Formulario de pago -->
+    <section class="card pago-form">
+      <h2>Pago</h2>
+
+      <div class="campo">
+        <label class="small">Nombre completo *</label>
+        <input type="text" [(ngModel)]="nombreCompleto" placeholder="Mateo Gutierrez Paz">
+      </div>
+
+      <div class="campo">
+        <label class="small">Correo electrónico *</label>
+        <input type="email" [(ngModel)]="email" placeholder="mateo@correo.com">
+      </div>
+
+      <div class="metodos-pago">
+        <div class="plan-row" [class.on]="metodoPago === 'TARJETA'" (click)="seleccionarMetodo('TARJETA')">
+          <i class="ti ti-credit-card"></i>
+          <span class="name">Tarjeta de crédito o débito</span>
+        </div>
+
+        <div class="plan-row" [class.on]="metodoPago === 'YAPE'" (click)="seleccionarMetodo('YAPE')">
+          <i class="ti ti-wallet"></i>
+          <span class="name">Billeteras electrónicas (Yape / Plin)</span>
+        </div>
+
+        <div class="plan-row" [class.on]="metodoPago === 'EFECTIVO'" (click)="seleccionarMetodo('EFECTIVO')">
+          <i class="ti ti-building-bank"></i>
+          <span class="name">Pago en efectivo en sede</span>
+        </div>
+      </div>
+
+      <div class="terms">
+        <input type="checkbox" [(ngModel)]="aceptaTerminos">
+        <span>Acepto los Términos y la Política de Datos Personales *</span>
+      </div>
+
+<button class="btn-pagar" (click)="abrirModalPago()" [disabled]="procesando">
+  {{ procesando ? 'Procesando...' : 'Confirmar y pagar S/ ' + (total + 1).toFixed(2) }}
+</button>
+    </section>
+
+  </div>
+  <!-- Modal Tarjeta -->
+<div *ngIf="mostrarModalTarjeta" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Pago con tarjeta</h2>
+    <div class="campo">
+      <label>Número de tarjeta</label>
+      <input type="text" [(ngModel)]="tarjetaNumero" placeholder="1234 5678 9012 3456" maxlength="16">
+    </div>
+    <div class="campo-row">
+      <div class="campo">
+        <label>Fecha (MM/AA)</label>
+        <input type="text" [(ngModel)]="tarjetaFecha" placeholder="12/25">
+      </div>
+      <div class="campo">
+        <label>CVV</label>
+        <input type="text" [(ngModel)]="tarjetaCvv" placeholder="123" maxlength="3">
+      </div>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn-secundario" (click)="mostrarModalTarjeta = false">Cancelar</button>
+      <button class="btn-principal" (click)="confirmarPagoTarjeta()">Pagar S/ {{ (total + 1).toFixed(2) }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Yape -->
+<!-- Modal Yape (autenticación) -->
+<div *ngIf="mostrarModalYape" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Pago con Yape / Plin</h2>
+    <div class="campo">
+      <label>Número de celular</label>
+      <input type="tel" [(ngModel)]="yapeCelular" placeholder="987654321" maxlength="9">
+    </div>
+    <div class="campo">
+      <label>Clave de transacción (4 dígitos)</label>
+      <input type="password" [(ngModel)]="yapeClave" placeholder="****" maxlength="4">
+    </div>
+    <p style="font-size:12px;color:var(--ink-3);">Recibirás un código de confirmación (simulado).</p>
+    <div class="modal-acciones">
+      <button class="btn-secundario" (click)="mostrarModalYape = false">Cancelar</button>
+      <button class="btn-principal" (click)="confirmarPagoYape()">Pagar S/ {{ (total + 1).toFixed(2) }}</button>
+    </div>
+  </div>
+</div>
+
+</main>

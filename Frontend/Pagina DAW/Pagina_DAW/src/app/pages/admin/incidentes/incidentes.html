@@ -1,0 +1,183 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando incidentes...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <div class="frame">
+      <div class="content-inner">
+
+        <!-- TOOLBAR -->
+        <div class="table-toolbar">
+
+          <div class="filters">
+            <select [(ngModel)]="filtroEstado">
+              <option value="TODOS">Todos los estados</option>
+              <option value="ABIERTO">Abierto</option>
+              <option value="EN_PROCESO">En proceso</option>
+              <option value="RESUELTO">Resuelto</option>
+              <option value="CERRADO">Cerrado</option>
+            </select>
+
+            <select [(ngModel)]="filtroTipo">
+              <option value="TODOS">Todos los tipos</option>
+              <option *ngFor="let t of tiposUnicos" [value]="t">
+                {{ getTipoTexto(t) }}
+              </option>
+            </select>
+          </div>
+
+          <span class="badge b-open" *ngIf="contadorAbiertos > 0">
+            {{ contadorAbiertos }} pendiente{{ contadorAbiertos > 1 ? 's' : '' }}
+          </span>
+
+        </div>
+
+        <!-- TABLA -->
+        <table>
+          <thead>
+            <tr>
+              <th>Espacio / Ticket</th>
+              <th>Tipo</th>
+              <th>Operador</th>
+              <th>Reportado</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of incidentesFiltrados">
+              <td>
+                <div class="cell-icon">
+                  <div class="type-icon" [ngClass]="i.estado.toLowerCase()">
+                    <i [class]="getIconoTipo(i.tipo)"></i>
+                  </div>
+                  <div>
+                    <div class="cell-main">
+                      {{ i.codigoEspacio || '—' }}
+                    </div>
+                    <div class="cell-sub">
+                      {{ i.ticketId ? 'Ticket #' + i.ticketId : 'Sin ticket' }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="cell-main">{{ getTipoTexto(i.tipo) }}</div>
+                <div class="cell-sub desc">{{ i.descripcion | slice:0:40 }}{{ i.descripcion?.length > 40 ? '...' : '' }}</div>
+              </td>
+              <td>{{ i.nombreOperador || '—' }}</td>
+              <td class="cell-date">{{ formatearFecha(i.fechaCreacion) }}</td>
+              <td>
+                <span class="badge" [ngClass]="getEstadoBadgeClass(i.estado)">
+                  {{ getEstadoTexto(i.estado) }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="icon-btn"
+                        *ngIf="puedeResolver(i)"
+                        (click)="abrirModalResolver(i)"
+                        title="Resolver">
+                  <i class="ti ti-check"></i>
+                </button>
+                <button class="icon-btn"
+                        *ngIf="!puedeResolver(i)"
+                        [disabled]="true"
+                        title="Ya resuelto">
+                  <i class="ti ti-circle-check"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="incidentesFiltrados.length === 0">
+              <td colspan="6" class="empty-msg">
+                No hay incidentes que coincidan con los filtros.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>
+
+<!-- ============================================
+     MODAL RESOLVER
+     ============================================ -->
+<div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Resolver incidente</h3>
+      <button class="close-btn" (click)="cerrarModal()">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="incidenteSeleccionado">
+
+      <!-- Detalles del incidente -->
+      <div class="incidente-info">
+        <div class="info-row">
+          <span class="info-label">Tipo:</span>
+          <span class="info-value">{{ getTipoTexto(incidenteSeleccionado.tipo) }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Espacio:</span>
+          <span class="info-value">{{ incidenteSeleccionado.codigoEspacio || '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Reportado por:</span>
+          <span class="info-value">{{ incidenteSeleccionado.nombreOperador || '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Fecha:</span>
+          <span class="info-value">{{ formatearFecha(incidenteSeleccionado.fechaCreacion) }}</span>
+        </div>
+      </div>
+
+      <!-- Descripción original -->
+      <div class="descripcion-box">
+        <span class="desc-label">Descripción del operador:</span>
+        <p>{{ incidenteSeleccionado.descripcion }}</p>
+      </div>
+
+      <!-- Textarea de solución -->
+      <div class="form-group">
+        <label>Solución *</label>
+        <textarea [(ngModel)]="solucionTexto"
+                  rows="4"
+                  placeholder="Describe la solución aplicada al incidente..."></textarea>
+        <div class="help-text">
+          Mínimo 10 caracteres. Esta solución será visible para el operador.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="cerrarModal()" [disabled]="procesando">
+        Cancelar
+      </button>
+      <button class="btn btn-accent" (click)="resolver()" [disabled]="procesando">
+        <i class="ti" [ngClass]="procesando ? 'ti-loader-2' : 'ti-check'"></i>
+        {{ procesando ? 'Guardando...' : 'Resolver incidente' }}
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,162 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando alertas...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <!-- Header -->
+    <div class="welcome-section">
+      <div>
+        <p class="welcome-title">Alertas y notificaciones</p>
+        <p class="welcome-subtitle">
+          {{ totalAbiertas }} alerta{{ totalAbiertas !== 1 ? 's' : '' }} activa{{ totalAbiertas !== 1 ? 's' : '' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters">
+      <button class="filter-chip"
+              [class.active]="filtroActivo === 'TODAS'"
+              (click)="setFiltro('TODAS')">
+        Todas
+      </button>
+      <button class="filter-chip"
+              [class.active]="filtroActivo === 'ABIERTAS'"
+              (click)="setFiltro('ABIERTAS')">
+        Abiertas ({{ totalAbiertas }})
+      </button>
+      <button class="filter-chip"
+              [class.active]="filtroActivo === 'RESUELTAS'"
+              (click)="setFiltro('RESUELTAS')">
+        Resueltas ({{ resueltas.length }})
+      </button>
+    </div>
+
+    <!-- ============================================
+         ALERTAS CRÍTICAS (ABIERTAS)
+         ============================================ -->
+    <div class="card alert-card critic" *ngIf="mostrarCriticas">
+      <div class="card-header">
+        <div class="card-title-wrap">
+          <i class="ti ti-alert-triangle"></i>
+          <span class="card-title">Alertas críticas</span>
+        </div>
+        <span class="badge b-crit">{{ criticas.length }}</span>
+      </div>
+
+      <div class="alert-item" *ngFor="let i of criticas">
+        <div class="alert-icon crit">
+          <i [class]="getIconoTipo(i.tipo)"></i>
+        </div>
+        <div class="alert-content">
+          <div class="alert-title">
+            {{ getEtiquetaTipo(i.tipo) }}
+            <span *ngIf="i.codigoEspacio" class="alert-espacio">
+              · Espacio {{ i.codigoEspacio }}
+            </span>
+          </div>
+          <div class="alert-desc">{{ i.descripcion }}</div>
+          <div class="alert-time">
+            <i class="ti ti-clock"></i>
+            {{ tiempoTranscurrido(i.fechaCreacion) }} · {{ formatearHora(i.fechaCreacion) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         EN PROCESO
+         ============================================ -->
+    <div class="card alert-card process" *ngIf="mostrarEnProceso">
+      <div class="card-header">
+        <div class="card-title-wrap">
+          <i class="ti ti-loader"></i>
+          <span class="card-title">En proceso</span>
+        </div>
+        <span class="badge b-process">{{ enProceso.length }}</span>
+      </div>
+
+      <div class="alert-item" *ngFor="let i of enProceso">
+        <div class="alert-icon process">
+          <i [class]="getIconoTipo(i.tipo)"></i>
+        </div>
+        <div class="alert-content">
+          <div class="alert-title">
+            {{ getEtiquetaTipo(i.tipo) }}
+            <span *ngIf="i.codigoEspacio" class="alert-espacio">
+              · Espacio {{ i.codigoEspacio }}
+            </span>
+          </div>
+          <div class="alert-desc">{{ i.descripcion }}</div>
+          <div class="alert-time">
+            <i class="ti ti-clock"></i>
+            {{ tiempoTranscurrido(i.fechaCreacion) }} · {{ formatearHora(i.fechaCreacion) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         RESUELTAS
+         ============================================ -->
+    <div class="card alert-card resolved" *ngIf="mostrarResueltas">
+      <div class="card-header">
+        <div class="card-title-wrap">
+          <i class="ti ti-circle-check"></i>
+          <span class="card-title">Resueltas</span>
+        </div>
+        <span class="badge b-resolved">{{ resueltas.length }}</span>
+      </div>
+
+      <div class="alert-item" *ngFor="let i of resueltas">
+        <div class="alert-icon resolved">
+          <i class="ti ti-circle-check"></i>
+        </div>
+        <div class="alert-content">
+          <div class="alert-title">
+            {{ getEtiquetaTipo(i.tipo) }}
+            <span *ngIf="i.codigoEspacio" class="alert-espacio">
+              · Espacio {{ i.codigoEspacio }}
+            </span>
+          </div>
+          <div class="alert-desc">{{ i.descripcion }}</div>
+          <div class="alert-solution" *ngIf="i.solucion">
+            <i class="ti ti-tool"></i>
+            <span>{{ i.solucion }}</span>
+          </div>
+          <div class="alert-time">
+            <i class="ti ti-clock"></i>
+            {{ formatearHora(i.fechaCierre || i.fechaCreacion) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VACÍO -->
+    <div class="card empty-card" *ngIf="nadaQueMostrar">
+      <i class="ti ti-circle-check" style="color: var(--available);"></i>
+      <p>Sin alertas activas</p>
+      <span>Todo está funcionando correctamente</span>
+    </div>
+
+    <!-- Auto-refresh -->
+    <div class="refresh-info">
+      <i class="ti ti-refresh"></i>
+      <span>Se actualiza automáticamente cada 30 segundos</span>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -1,0 +1,161 @@
+.login-page {
+  min-height: 100vh;
+  background: var(--page);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.frame {
+  width: 100%;
+  max-width: 420px;
+
+  background: var(--card);
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  margin: 0 auto;
+}
+
+.pad {
+  padding: 24px;
+}
+
+.brand-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 20px;
+}
+
+.brand-login i {
+  font-size: 20px;
+  color: var(--navy);
+}
+
+.brand-login span {
+  font-weight: 600;
+}
+
+.small {
+  display: block;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  color: var(--ink-2);
+
+  margin-bottom: 6px;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  height: 40px;
+
+  border: 1px solid var(--line);
+  border-radius: 7px;
+
+  padding: 0 12px;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  outline: none;
+
+  margin-bottom: 14px;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: var(--navy);
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 12px;
+  color: var(--ink-3);
+
+  margin-bottom: 18px;
+}
+
+.options input[type="checkbox"] {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.forgot {
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.btn {
+  border: none;
+  border-radius: 7px;
+
+  height: 40px;
+
+  padding: 0 16px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.btn-accent {
+  width: 100%;
+
+  background: var(--accent);
+  color: white;
+
+  margin-bottom: 14px;
+}
+
+.btn-accent:hover {
+  background: var(--accent-dark);
+}
+
+.hairline {
+  height: 1px;
+  background: var(--line);
+
+  margin-bottom: 14px;
+}
+
+.register {
+  text-align: center;
+
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.register span {
+  color: var(--navy);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Agregar al final del archivo */
+.error-mensaje {
+  background: var(--occupied-bg);
+  color: var(--occupied);
+  padding: 10px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  border: 1px solid var(--occupied);
+}
+
+.btn-accent:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

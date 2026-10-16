@@ -1,0 +1,39 @@
+<div class="appbar">
+  <div class="brand" routerLink="/cliente/dashboard">
+    <i class="ti ti-parking"></i>
+    <span>ParkSpot</span>
+  </div>
+
+  <nav>
+    <a routerLink="/cliente/dashboard" routerLinkActive="on" [routerLinkActiveOptions]="{exact: true}">
+      <i class="ti ti-home"></i>
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="/cliente/buscar" routerLinkActive="on">
+      <i class="ti ti-search"></i>
+      <span>Buscar</span>
+    </a>
+    <a routerLink="/cliente/mis-reservas" routerLinkActive="on">
+      <i class="ti ti-ticket"></i>
+      <span>Mis reservas</span>
+    </a>
+    <a routerLink="/cliente/membresias" routerLinkActive="on">
+      <i class="ti ti-calendar-star"></i>
+      <span>Membresías</span>
+    </a>
+    <a routerLink="/cliente/perfil" routerLinkActive="on">
+      <i class="ti ti-user"></i>
+      <span>Perfil</span>
+    </a>
+  </nav>
+
+  <div class="right">
+    <div class="bell" routerLink="/cliente/notificaciones">
+      <i class="ti ti-bell"></i>
+      <span class="dot"></span>
+    </div>
+    <div class="avatar" routerLink="/cliente/perfil">MG</div>
+  </div>
+</div>
+
+<router-outlet />

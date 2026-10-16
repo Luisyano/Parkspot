@@ -1,0 +1,96 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando dashboard...</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando">
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="l">Total sedes</div>
+        <div class="v">{{ totalSedes }}</div>
+        <div class="c">▲ Sedes registradas</div>
+      </div>
+
+      <div class="kpi k2">
+        <div class="l">Ingresos</div>
+        <div class="v">S/ {{ ingresosTotales | number:'1.2-2' }}</div>
+        <div class="c">▲ Total acumulado</div>
+      </div>
+
+      <div class="kpi k3">
+        <div class="l">Ocupación</div>
+        <div class="v">{{ ocupacionPromedio }}%</div>
+        <div class="c">▲ Promedio general</div>
+      </div>
+
+      <div class="kpi k4">
+        <div class="l">Usuarios</div>
+        <div class="v">{{ totalUsuarios }}</div>
+        <div class="c">▲ Registrados</div>
+      </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="grid-2" style="margin-bottom:16px;">
+
+      <!-- Ocupación por sede -->
+      <div class="card">
+        <div class="t">Ocupación por sede</div>
+
+        <div class="bar-row" *ngFor="let item of ocupacionPorSede">
+          <span class="label">{{ item.nombre }}</span>
+          <div class="bar-track">
+            <div class="bar-fill"
+                 [style.width.%]="item.porcentaje"
+                 [style.background]="item.color">
+            </div>
+          </div>
+          <span class="pct">{{ item.porcentaje }}%</span>
+        </div>
+
+        <p *ngIf="ocupacionPorSede.length === 0" class="empty-msg">
+          No hay datos de ocupación todavía.
+        </p>
+      </div>
+
+      <!-- Ingresos por modalidad -->
+      <div class="card">
+        <div class="t">Ingresos por modalidad</div>
+
+        <div class="bar-row" *ngFor="let item of ingresosPorModalidad">
+          <span class="label">{{ item.modalidad }}</span>
+          <div class="bar-track">
+            <div class="bar-fill"
+                 [style.width.%]="item.porcentaje"
+                 [style.background]="item.color">
+            </div>
+          </div>
+          <span class="pct">{{ item.porcentaje }}%</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ACTIVIDADES -->
+    <div class="card">
+      <div class="t">Últimas actividades y alertas</div>
+
+      <div class="alert-row" *ngFor="let act of ultimasActividades">
+        <i [class]="act.icono" [style.color]="act.color"></i>
+        {{ act.texto }}
+      </div>
+
+      <p *ngIf="ultimasActividades.length === 0" class="empty-msg">
+        No hay actividades recientes.
+      </p>
+    </div>
+
+  </ng-container>
+
+</div>

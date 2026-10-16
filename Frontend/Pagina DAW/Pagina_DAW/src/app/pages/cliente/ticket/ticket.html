@@ -1,0 +1,73 @@
+<main class="ticket-container">
+
+  <div class="ticket-card" *ngIf="!cargando && !errorMensaje">
+    <div class="ticket-header">
+      <i class="ti ti-parking"></i>
+      <h1>ParkSpot</h1>
+    </div>
+
+    <div class="ticket-qr" *ngIf="qrCodeDataURL">
+      <img [src]="qrCodeDataURL" alt="Código QR">
+    </div>
+
+    <div class="ticket-code">
+      <span class="label">CÓDIGO DEL TICKET</span>
+      <span class="code">{{ codigoTicket }}</span>
+    </div>
+
+    <div class="ticket-status">
+      <i class="ti ti-check-circle"></i>
+      <span>Pago confirmado</span>
+    </div>
+
+    <div class="ticket-info">
+      <div class="info-row">
+        <span class="label">Espacio</span>
+        <span class="value">{{ espacio?.codigo || '—' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Vehículo</span>
+        <span class="value">{{ vehiculo?.placa || '—' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Modalidad</span>
+        <span class="value">{{ getNombrePlan(plan?.nombre || 'POR_HORA') }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Método de pago</span>
+        <span class="value">{{ getMetodoPagoTexto() }}</span>
+      </div>
+      <div class="info-row total">
+        <span class="label">Total pagado</span>
+        <span class="value">S/ {{ total.toFixed(2) }}</span>
+      </div>
+    </div>
+
+    <div class="ticket-footer">
+      <p>Presenta este ticket al operador al llegar.</p>
+      <p class="gracia">Tiempo de gracia: 15 min.</p>
+    </div>
+
+    <div class="ticket-actions">
+      <button class="btn-descargar" (click)="descargarTicket()">
+        <i class="ti ti-download"></i> Descargar ticket
+      </button>
+      <button class="btn-volver" routerLink="/cliente/mis-reservas">
+        Ver mis reservas
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando ticket...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+</main>

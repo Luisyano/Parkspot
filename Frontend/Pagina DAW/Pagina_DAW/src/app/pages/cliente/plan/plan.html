@@ -1,0 +1,117 @@
+<main class="plan-container">
+
+  <div class="stepbar">
+    <div class="left">
+      <i class="ti ti-chevron-left" routerLink="/cliente/mapa/{{ espacioId }}"></i>
+      2. Elige tu modalidad
+    </div>
+    <div class="step-info">
+      <span>Paso 2 de 4</span>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando planes...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!cargando && !errorMensaje" class="plan-content">
+
+    <!-- Información del espacio -->
+    <div class="info-espacio">
+      <div class="info-icon">
+        <i class="ti ti-parking"></i>
+      </div>
+      <div class="info-text">
+        <span class="info-label">Espacio seleccionado</span>
+        <strong class="info-value">{{ codigoEspacio }} · {{ piso }} · {{ nombreSede }}</strong>
+      </div>
+    </div>
+
+    <!-- Selección de plan -->
+    <div class="seccion">
+      <h3 class="seccion-titulo">Elige tu plan</h3>
+      <div class="planes-lista">
+        <!-- ✅ trackBy: trackByPlan -->
+        <div *ngFor="let plan of planes; trackBy: trackByPlan"
+             class="plan-row"
+             [class.on]="planSeleccionado?.id === plan.id"
+             (click)="seleccionarPlan(plan)">
+          <div class="plan-icono">
+            <i [class]="getIconoPlan(plan.nombre)"></i>
+          </div>
+          <div class="plan-info">
+            <span class="plan-nombre">{{ getNombrePlan(plan.nombre) }}</span>
+            <span class="plan-descripcion" *ngIf="plan.descuentoPorcentaje > 0">
+              Ahorra {{ plan.descuentoPorcentaje }}%
+            </span>
+          </div>
+          <div class="plan-precio">
+            <span class="precio-original" *ngIf="plan.descuentoPorcentaje > 0">
+              S/ {{ getPrecioBase(plan) }}
+            </span>
+            <span class="precio-final">
+              S/ {{ getPrecioFinal(plan) }}
+              <small *ngIf="plan.nombre === 'POR_HORA'">/ h</small>
+              <small *ngIf="plan.nombre !== 'POR_HORA'">/ mes</small>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="separador"></div>
+
+    <!-- Selección de vehículo -->
+    <div class="seccion">
+      <h3 class="seccion-titulo">Selecciona tu vehículo</h3>
+      <div class="vehiculos-lista">
+        <!-- ✅ trackBy: trackByVehiculo -->
+        <div *ngFor="let v of vehiculos; trackBy: trackByVehiculo"
+             class="vehiculo-row"
+             [class.on]="vehiculoSeleccionado?.id === v.id"
+             (click)="seleccionarVehiculo(v)">
+          <div class="vehiculo-icono">
+            <i class="ti ti-car"></i>
+          </div>
+          <div class="vehiculo-info">
+            <span class="vehiculo-placa">{{ v.placa }}</span>
+            <span class="vehiculo-modelo">{{ v.modelo }}</span>
+          </div>
+          <span class="vehiculo-tipo">{{ v.tipo }}</span>
+        </div>
+
+        <!-- Sin vehículos -->
+        <div *ngIf="vehiculos.length === 0" class="vehiculo-row empty">
+          <i class="ti ti-car-off"></i>
+          <span>No tienes vehículos registrados</span>
+          <a routerLink="/cliente/movil" class="btn-agregar-vehiculo">+ Agregar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón confirmar -->
+    <button class="btn-confirmar" 
+            [disabled]="!planSeleccionado || !vehiculoSeleccionado"
+            (click)="confirmarSeleccion()">
+      <span>Confirmar selección</span>
+      <i class="ti ti-arrow-right"></i>
+    </button>
+
+    <!-- Estado de selección -->
+    <div class="selection-status" *ngIf="planSeleccionado && vehiculoSeleccionado">
+      <i class="ti ti-check-circle"></i>
+      <span>Listo para continuar</span>
+    </div>
+
+  </div>
+
+</main>

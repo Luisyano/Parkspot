@@ -1,0 +1,192 @@
+.landing {
+  min-height: 100vh;
+  padding: 40px 24px;
+  background: var(--page);
+}
+
+.frame {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.06);
+}
+
+/* Barra superior */
+
+.appbar {
+  background: var(--navy);
+  padding: 0 20px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.brand i {
+  font-size: 19px;
+}
+
+.appbar nav {
+  display: flex;
+  gap: 22px;
+}
+
+.appbar nav span {
+  font-size: 13px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Hero */
+
+.hero {
+  background: var(--navy);
+  color: #fff;
+
+  padding: 56px 32px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 30px;
+  font-weight: 600;
+
+  max-width: 640px;
+  margin: 0 auto 10px;
+}
+
+.hero p {
+  color: #C9D6E8;
+  font-size: 14px;
+
+  max-width: 520px;
+  margin: 0 auto 24px;
+}
+
+/* Buscador */
+
+.searchbox {
+  max-width: 520px;
+  margin: 0 auto;
+
+  display: flex;
+
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.searchbox input {
+  border: none;
+  height: 46px;
+
+  flex: 1;
+
+  padding: 0 16px;
+
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+.searchbox button {
+  background: var(--accent);
+  color: #fff;
+
+  border: none;
+
+  padding: 0 20px;
+
+  font-weight: 600;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* Características */
+
+.feature {
+  text-align: center;
+  padding: 16px;
+}
+
+.feature i {
+  font-size: 22px;
+  color: var(--accent);
+
+  margin-bottom: 8px;
+
+  display: block;
+}
+
+.feature .t {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.feature .d {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* Sedes */
+
+.sedes {
+  padding-top: 0;
+}
+
+.titulo-sedes {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+  .landing {
+    padding: 0;
+  }
+
+  .frame {
+    border-radius: 0;
+    border: none;
+  }
+
+  .grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding: 40px 20px;
+  }
+
+  .hero h1 {
+    font-size: 25px;
+  }
+
+  .appbar nav {
+    gap: 10px;
+  }
+
+}

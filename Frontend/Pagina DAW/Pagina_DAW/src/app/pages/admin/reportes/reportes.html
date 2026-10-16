@@ -1,0 +1,124 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando reportes...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <!-- TOOLBAR -->
+    <div class="table-toolbar">
+      <div class="filters">
+        <select [(ngModel)]="tipoReporte">
+          <option value="INGRESOS">Ingresos</option>
+          <option value="OCUPACION">Ocupación</option>
+          <option value="USUARIOS">Usuarios</option>
+        </select>
+        <input type="month" [(ngModel)]="mesSeleccionado">
+      </div>
+
+      <button class="btn btn-ghost" (click)="exportarPDF()" [disabled]="exportando">
+        <i class="ti" [ngClass]="exportando ? 'ti-loader-2' : 'ti-download'"></i>
+        {{ exportando ? 'Generando...' : 'Exportar PDF' }}
+      </button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="l">Sedes</div>
+        <div class="v">{{ reportesPorSede.length }}</div>
+      </div>
+      <div class="kpi k2">
+        <div class="l">Ingresos</div>
+        <div class="v">S/ {{ ingresosTotales | number:'1.2-2' }}</div>
+      </div>
+      <div class="kpi k3">
+        <div class="l">Ocupación</div>
+        <div class="v">{{ ocupacionPromedio }}%</div>
+      </div>
+      <div class="kpi k4">
+        <div class="l">Usuarios</div>
+        <div class="v">{{ totalUsuarios }}</div>
+      </div>
+    </div>
+
+    <!-- INGRESOS POR MODALIDAD -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="t">Ingresos por modalidad</div>
+
+      <p class="total-line">
+        S/ {{ ingresosTotales | number:'1.2-2' }}
+        <span class="total-sub">total</span>
+      </p>
+
+      <div class="bar-row" *ngFor="let m of ingresosPorModalidad">
+        <span class="label">{{ m.modalidad }}</span>
+        <div class="bar-track">
+          <div class="bar-fill"
+               [style.width.%]="m.porcentaje"
+               [style.background]="m.color">
+          </div>
+        </div>
+        <span class="pct">{{ m.porcentaje }}%</span>
+      </div>
+    </div>
+
+    <!-- TABLA DE SEDES -->
+    <div class="card">
+      <div class="t">Detalle por sede</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sede</th>
+            <th>Distrito</th>
+            <th>Espacios</th>
+            <th>Ocupados</th>
+            <th>Ocupación</th>
+            <th>Ingresos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of reportesPorSede">
+            <td>
+              <div class="cell-main">{{ r.sedeNombre }}</div>
+            </td>
+            <td>{{ r.distrito }}</td>
+            <td>{{ r.totalEspacios }}</td>
+            <td>{{ r.ocupados }}</td>
+            <td>
+              <div class="ocupacion-cell">
+                <div class="mini-bar-track">
+                  <div class="mini-bar-fill"
+                       [style.width.%]="r.ocupacion"
+                       [style.background]="getColorOcupacion(r.ocupacion)">
+                  </div>
+                </div>
+                <span class="mini-pct">{{ r.ocupacion }}%</span>
+              </div>
+            </td>
+            <td class="cell-money">S/ {{ r.ingresos | number:'1.2-2' }}</td>
+          </tr>
+
+          <tr *ngIf="reportesPorSede.length === 0">
+            <td colspan="6" class="empty-msg">
+              No hay datos de sedes.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </ng-container>
+
+</div>

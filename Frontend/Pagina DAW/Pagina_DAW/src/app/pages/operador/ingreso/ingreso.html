@@ -1,0 +1,155 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando ticket...</p>
+  </div>
+
+  <!-- ERROR SIN TICKET -->
+  <div *ngIf="!cargando && !ticket && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+    <button class="btn btn-ghost" (click)="volver()">
+      <i class="ti ti-arrow-left"></i>
+      Volver a validar
+    </button>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && ticket">
+
+    <!-- ============================================
+         ÉXITO
+         ============================================ -->
+    <div class="card card-success" *ngIf="mensajeExito">
+      <div class="success-icon">
+        <i class="ti ti-circle-check"></i>
+      </div>
+      <p class="success-title">¡Ingreso registrado!</p>
+      <p class="success-msg">{{ mensajeExito }}</p>
+      <div class="success-loader">
+        <div class="spinner-sm"></div>
+        <span>Redirigiendo al dashboard...</span>
+      </div>
+    </div>
+
+    <!-- ============================================
+         VISTA PRINCIPAL
+         ============================================ -->
+    <ng-container *ngIf="!mensajeExito">
+
+      <!-- Encabezado -->
+      <div class="welcome-section">
+        <p class="welcome-title">Confirmar ingreso</p>
+        <p class="welcome-subtitle">Verifica los datos antes de confirmar</p>
+      </div>
+
+      <!-- Error -->
+      <div class="alert-error" *ngIf="errorMensaje">
+        <i class="ti ti-alert-circle"></i>
+        {{ errorMensaje }}
+      </div>
+
+      <!-- Card: Datos del vehículo -->
+      <div class="card">
+        <div class="t">Información del vehículo</div>
+
+        <!-- Placa destacada -->
+        <div class="placa-box">
+          <div>
+            <div class="placa-label">Placa</div>
+            <div class="placa-valor">{{ ticket.placaVehiculo || '—' }}</div>
+          </div>
+          <div class="ticket-code">
+            <div class="placa-label">Código</div>
+            <div class="code-mono">{{ ticket.codigo }}</div>
+          </div>
+        </div>
+
+        <!-- Info filas -->
+        <div class="row-flex">
+          <span class="lbl">Usuario</span>
+          <span class="val">{{ ticket.nombreUsuario || '—' }}</span>
+        </div>
+        <div class="row-flex">
+          <span class="lbl">Espacio asignado</span>
+          <span class="val">{{ ticket.codigoEspacio || '—' }}</span>
+        </div>
+        <div class="row-flex">
+          <span class="lbl">Monto pagado</span>
+          <span class="val">S/ {{ ticket.montoPagado | number:'1.2-2' }}</span>
+        </div>
+        <div class="row-flex" *ngIf="ticket.fechaIngresoReal">
+          <span class="lbl">Hora de ingreso</span>
+          <span class="val">{{ formatearFecha(ticket.fechaIngresoReal) }}</span>
+        </div>
+      </div>
+
+      <!-- Card: Cambios que se aplicarán -->
+      <div class="card">
+        <div class="t">Al confirmar el ingreso</div>
+
+        <div class="row-flex">
+          <span class="lbl">Espacio</span>
+          <span class="val badges">
+            <span class="badge b-pending">RESERVADO</span>
+            <i class="ti ti-arrow-right arrow-icon"></i>
+            <span class="badge b-occupied">OCUPADO</span>
+          </span>
+        </div>
+
+        <div class="row-flex">
+          <span class="lbl">Reserva</span>
+          <span class="val badges">
+            <span class="badge b-pending">CONFIRMADA</span>
+            <i class="ti ti-arrow-right arrow-icon"></i>
+            <span class="badge b-active">ACTIVA</span>
+          </span>
+        </div>
+
+        <div class="row-flex">
+          <span class="lbl">Ticket</span>
+          <span class="val badges">
+            <span class="badge b-neutral">SIN INGRESO</span>
+            <i class="ti ti-arrow-right arrow-icon"></i>
+            <span class="badge b-occupied">CON INGRESO</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Aviso -->
+      <div class="card card-warning" *ngIf="!ticket.fechaIngresoReal">
+        <i class="ti ti-info-circle"></i>
+        <span>Al confirmar, se guardará la hora actual como ingreso real y el espacio quedará ocupado.</span>
+      </div>
+
+      <!-- Si ya ingresó -->
+      <div class="card card-info" *ngIf="ticket.fechaIngresoReal">
+        <i class="ti ti-info-circle"></i>
+        <span>Este vehículo ya ingresó. Usa "Registrar salida" cuando retire su vehículo.</span>
+      </div>
+
+      <!-- Botones -->
+      <div class="actions">
+        <button class="btn btn-success btn-large"
+                *ngIf="!ticket.fechaIngresoReal"
+                (click)="confirmarIngreso()"
+                [disabled]="procesando">
+          <i class="ti" [ngClass]="procesando ? 'ti-loader-2 spin' : 'ti-circle-check'"></i>
+          {{ procesando ? 'Registrando ingreso...' : 'Confirmar ingreso' }}
+        </button>
+
+        <button class="btn btn-ghost"
+                (click)="volver()"
+                [disabled]="procesando">
+          <i class="ti ti-arrow-left"></i>
+          Volver
+        </button>
+      </div>
+
+    </ng-container>
+
+  </ng-container>
+
+</div>

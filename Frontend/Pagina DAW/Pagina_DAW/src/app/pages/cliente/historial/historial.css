@@ -1,0 +1,233 @@
+* {
+  box-sizing: border-box;
+}
+
+.historial-container {
+  min-height: 100vh;
+  background: var(--page);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  padding: 30px 24px 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* TITULO */
+.titulo h1 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.titulo p {
+  color: var(--ink-3);
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+/* LISTA */
+.historial-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* CARD */
+.historial-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.06);
+}
+
+/* CABECERA */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.card-header h2 {
+  margin: 0 0 7px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.card-header p {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+/* ESTADOS */
+.estado {
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.finalizada {
+  background: var(--available-bg);
+  color: var(--available);
+}
+
+.cancelada {
+  background: var(--occupied-bg);
+  color: var(--occupied);
+}
+
+/* DATOS */
+.datos {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 25px 0;
+}
+
+.dato {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icono {
+  font-size: 22px;
+}
+
+.dato div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dato small {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.dato strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+/* FOOTER */
+.card-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pago {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pago span {
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.pago strong {
+  color: var(--navy);
+  font-size: 20px;
+}
+
+/* BOTON */
+.btn-detalle {
+  padding: 10px 18px;
+  border-radius: 7px;
+  border: 1px solid var(--navy);
+  background: var(--card);
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.btn-detalle:hover {
+  background: var(--page);
+}
+
+/* SIN HISTORIAL */
+.sin-historial {
+  background: var(--card);
+  text-align: center;
+  padding: 60px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.icono-vacio {
+  font-size: 50px;
+  margin-bottom: 15px;
+}
+
+.sin-historial h2 {
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.sin-historial p {
+  color: var(--ink-3);
+}
+
+.btn-buscar {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+.btn-buscar:hover {
+  background: var(--accent-dark);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .datos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .historial-container {
+    padding: 16px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .datos {
+    grid-template-columns: 1fr;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  .btn-detalle {
+    width: 100%;
+  }
+
+  .titulo h1 {
+    font-size: 26px;
+  }
+}

@@ -1,0 +1,67 @@
+<div class="operador-shell">
+
+  <!-- ============================================
+       TOPBAR DEL OPERADOR
+       ============================================ -->
+  <header class="opbar">
+
+    <!-- Marca -->
+    <div class="brand">
+      <i class="ti ti-parking"></i>
+      <span>{{ nombreSede }}</span>
+    </div>
+
+    <!-- Turno -->
+    <div class="shift">
+      <span class="shift-label">
+        <span class="dot"></span>
+        Turno {{ horaInicioTurno }}–{{ horaFinTurno }}
+      </span>
+      <span class="timer">
+        <i class="ti ti-clock"></i> {{ tiempoTranscurrido }}
+      </span>
+    </div>
+
+    <!-- Acciones -->
+    <div class="right">
+
+      <!-- Notificaciones -->
+      <button class="icon-btn" title="Notificaciones">
+        <i class="ti ti-bell"></i>
+        <span class="dot-badge" *ngIf="totalNotificaciones > 0"></span>
+      </button>
+
+      <!-- Avatar con menú -->
+      <div class="user-menu-wrap">
+        <div class="user" (click)="toggleUserMenu()">
+          <div class="avatar">{{ iniciales }}</div>
+          <i class="ti ti-chevron-down chevron"></i>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="user-dropdown" *ngIf="userMenuOpen" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <div class="avatar-lg">{{ iniciales }}</div>
+            <div class="user-info">
+              <span class="name">{{ nombreOperador }}</span>
+              <span class="role">Operador de sede</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="dropdown-item" (click)="cerrarSesion()">
+            <i class="ti ti-logout"></i> Cerrar sesión
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============================================
+       CONTENIDO
+       ============================================ -->
+  <main class="operador-main">
+    <router-outlet />
+  </main>
+
+</div>

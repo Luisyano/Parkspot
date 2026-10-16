@@ -1,0 +1,340 @@
+/* ============================================
+   LAYOUT OPERADOR
+   ============================================ */
+.operador-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--page);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================================
+   TOPBAR
+   ============================================ */
+.opbar {
+  background: var(--navy-dark);
+  padding: 0 20px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  animation: topbarSlideDown 0.4s ease;
+}
+
+@keyframes topbarSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MARCA */
+.brand {
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.25s ease;
+}
+
+.brand:hover {
+  transform: scale(1.02);
+}
+
+.brand i {
+  font-size: 18px;
+  color: var(--accent);
+  transition: transform 0.4s ease;
+}
+
+.brand:hover i {
+  transform: rotate(-12deg) scale(1.1);
+}
+
+/* TURNO */
+.shift {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  color: #B9C7DC;
+}
+
+.shift-label {
+  display: flex;
+  align-items: center;
+}
+
+.shift .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--available);
+  display: inline-block;
+  margin-right: 5px;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(15, 157, 99, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(15, 157, 99, 0);
+  }
+}
+
+.shift .timer {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 3px 8px;
+  background: rgba(255, 107, 53, 0.1);
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.shift .timer i {
+  font-size: 13px;
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+
+/* ACCIONES */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botón de notificaciones */
+.icon-btn {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: #B9C7DC;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.dot-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--navy-dark);
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* USUARIO */
+.user-menu-wrap {
+  position: relative;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 3px 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(255, 107, 53, 0.4);
+}
+
+.chevron {
+  font-size: 12px;
+  color: #B9C7DC;
+  transition: transform 0.3s ease;
+}
+
+.user:hover .chevron {
+  transform: rotate(180deg);
+}
+
+/* DROPDOWN */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border-radius: 12px;
+  min-width: 240px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+  animation: dropdownIn 0.2s ease;
+  z-index: 200;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--page);
+}
+
+.avatar-lg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  overflow: hidden;
+}
+
+.user-info .name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-info .role {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 12.5px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: rgba(214, 69, 69, 0.08);
+  color: var(--occupied);
+  padding-left: 20px;
+}
+
+.dropdown-item i {
+  font-size: 15px;
+  color: var(--occupied);
+}
+
+/* ============================================
+   MAIN
+   ============================================ */
+.operador-main {
+  flex: 1;
+  padding: 22px;
+  animation: contentFadeIn 0.4s ease;
+}
+
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .opbar {
+    padding: 0 12px;
+    height: 52px;
+  }
+
+  .brand span {
+    display: none;
+  }
+
+  .shift-label {
+    display: none;
+  }
+
+  .operador-main {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shift {
+    gap: 8px;
+  }
+
+  .shift .timer {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+}

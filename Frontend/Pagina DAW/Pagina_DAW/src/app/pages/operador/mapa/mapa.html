@@ -1,0 +1,145 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando mapa de ocupación...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <!-- Header -->
+    <div class="welcome-section">
+      <div>
+        <p class="welcome-title">Mapa de ocupación</p>
+        <p class="welcome-subtitle">
+          {{ totalEspacios }} espacios · 
+          {{ totalDisponibles }} disponibles · 
+          {{ totalReservados }} reservados · 
+          {{ totalOcupados }} ocupados
+        </p>
+      </div>
+
+      <!-- Filtro por piso -->
+      <div class="filters" *ngIf="pisosUnicos.length > 1">
+        <button class="filter-chip"
+                [class.active]="pisoSeleccionado === 'TODOS'"
+                (click)="pisoSeleccionado = 'TODOS'; aplicarFiltro()">
+          Todos
+        </button>
+        <button class="filter-chip"
+                *ngFor="let p of pisosUnicos"
+                [class.active]="pisoSeleccionado === p"
+                (click)="pisoSeleccionado = p; aplicarFiltro()">
+          Piso {{ p }}
+        </button>
+      </div>
+    </div>
+
+    <!-- KPIs mini -->
+    <div class="kpi-grid">
+      <div class="kpi k-av">
+        <div class="l">Disponibles</div>
+        <div class="v">{{ totalDisponibles }}</div>
+      </div>
+      <div class="kpi k-res">
+        <div class="l">Reservados</div>
+        <div class="v">{{ totalReservados }}</div>
+      </div>
+      <div class="kpi k-occ">
+        <div class="l">Ocupados</div>
+        <div class="v">{{ totalOcupados }}</div>
+      </div>
+      <div class="kpi k-inc">
+        <div class="l">Con incidente</div>
+        <div class="v">{{ totalConIncidente }}</div>
+      </div>
+    </div>
+
+    <!-- Card: Mapa -->
+    <div class="card">
+      <div class="t">
+        <i class="ti ti-layout-grid"></i> Distribución de espacios
+      </div>
+
+      <!-- Grid de espacios -->
+      <div class="spaces" [class.compact]="espaciosFiltrados.length > 40">
+        <div *ngFor="let e of espaciosFiltrados"
+             class="space"
+             [ngClass]="e.colorClase"
+             [title]="e.codigo + ' · ' + getTextoEstado(e.estado)">
+          {{ e.codigo }}
+        </div>
+      </div>
+
+      <!-- Leyenda -->
+      <div class="legend">
+        <span class="legend-item">
+          <span class="legend-box s-av"></span> Disponible
+        </span>
+        <span class="legend-item">
+          <span class="legend-box s-res"></span> Reservado
+        </span>
+        <span class="legend-item">
+          <span class="legend-box s-occ"></span> Ocupado
+        </span>
+        <span class="legend-item">
+          <span class="legend-box s-inc"></span> Incidente
+        </span>
+        <span class="legend-item" *ngIf="totalMantenimiento > 0">
+          <span class="legend-box s-mant"></span> Mantenimiento
+        </span>
+      </div>
+    </div>
+
+    <!-- Card: Detalle de ocupados -->
+    <div class="card" *ngIf="getEspaciosOcupados().length > 0">
+      <div class="t">
+        <i class="ti ti-list"></i> Espacios ocupados — detalle
+      </div>
+
+      <div class="detail-row" *ngFor="let e of getEspaciosOcupados()">
+        <div class="detail-info">
+          <div class="detail-code">
+            <span class="space-code">{{ e.codigo }}</span>
+            <span class="space-tipo">· {{ e.tipo }}</span>
+          </div>
+          <div class="detail-sub">
+            <span *ngIf="e.tieneIncidente" class="incidente-info">
+              <i class="ti ti-alert-triangle"></i>
+              {{ getIncidenteDeEspacio(e.id)?.tipo || 'Incidente' }}
+            </span>
+            <span *ngIf="!e.tieneIncidente">
+              Estado actual: {{ getTextoEstado(e.estado) }}
+            </span>
+          </div>
+        </div>
+
+        <span class="badge" [ngClass]="getBadgeClass(e.estado, e.tieneIncidente)">
+          {{ e.tieneIncidente ? 'Incidente' : getTextoEstado(e.estado) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Card: Sin espacios ocupados -->
+    <div class="card empty-card" *ngIf="getEspaciosOcupados().length === 0">
+      <i class="ti ti-parking"></i>
+      <p>No hay espacios ocupados ni reservados en este momento</p>
+    </div>
+
+    <!-- Info auto-refresh -->
+    <div class="refresh-info">
+      <i class="ti ti-refresh"></i>
+      <span>El mapa se actualiza automáticamente cada 30 segundos</span>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -1,0 +1,142 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando formulario...</p>
+  </div>
+
+  <!-- ERROR SIN CARGAR -->
+  <div *ngIf="!cargando && errorMensaje && espacios.length === 0" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- ============================================
+       PASO 1: FORMULARIO
+       ============================================ -->
+  <ng-container *ngIf="!cargando && paso === 'formulario'">
+
+    <div class="welcome-section">
+      <p class="welcome-title">Reportar incidente</p>
+      <p class="welcome-subtitle">Completa los datos para notificar al administrador</p>
+    </div>
+
+    <!-- Error -->
+    <div class="alert-error" *ngIf="errorMensaje">
+      <i class="ti ti-alert-circle"></i>
+      {{ errorMensaje }}
+    </div>
+
+    <!-- Card: Datos del incidente -->
+    <div class="card">
+      <div class="t">
+        <i class="ti ti-alert-triangle"></i> Datos del incidente
+      </div>
+
+      <!-- Espacio -->
+      <div class="form-group">
+        <label>Espacio afectado <span class="optional">(opcional)</span></label>
+        <select [(ngModel)]="espacioIdSeleccionado">
+          <option [ngValue]="null">— Sin espacio específico —</option>
+          <option *ngFor="let e of espacios" [ngValue]="e.id">
+            {{ e.codigo }} · {{ e.tipo }}
+          </option>
+        </select>
+        <div class="help-text">
+          Selecciona el espacio si el incidente está relacionado con uno en particular
+        </div>
+      </div>
+
+      <!-- Tipo -->
+      <div class="form-group">
+        <label>Tipo de incidente <span class="required">*</span></label>
+        <div class="tipo-grid">
+          <div class="tipo-option"
+               *ngFor="let t of tiposIncidente"
+               [class.selected]="tipoSeleccionado === t.valor"
+               (click)="tipoSeleccionado = t.valor">
+            <i [class]="t.icono"></i>
+            <span>{{ t.etiqueta }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label>Descripción del incidente <span class="required">*</span></label>
+        <textarea
+          [(ngModel)]="descripcion"
+          rows="5"
+          placeholder="Describe detalladamente lo ocurrido (mínimo 10 caracteres)..."
+          maxlength="500">
+        </textarea>
+        <div class="help-text">
+          {{ descripcion?.length || 0 }}/500 caracteres
+        </div>
+      </div>
+    </div>
+
+    <!-- Aviso -->
+    <div class="card card-info">
+      <i class="ti ti-info-circle"></i>
+      <span>Al reportar, el administrador recibirá una notificación y podrá dar seguimiento al caso.</span>
+    </div>
+
+    <!-- Botones -->
+    <div class="actions">
+      <button class="btn btn-accent btn-large"
+              (click)="reportar()"
+              [disabled]="procesando">
+        <i class="ti" [ngClass]="procesando ? 'ti-loader-2 spin' : 'ti-alert-triangle'"></i>
+        {{ procesando ? 'Reportando...' : 'Reportar incidente' }}
+      </button>
+
+      <button class="btn btn-ghost" (click)="resetearFormulario()" [disabled]="procesando">
+        <i class="ti ti-x"></i>
+        Limpiar
+      </button>
+    </div>
+
+  </ng-container>
+
+  <!-- ============================================
+       PASO 2: ÉXITO
+       ============================================ -->
+  <div class="card card-success" *ngIf="!cargando && paso === 'exito' && incidenteCreado">
+    <div class="success-icon">
+      <i class="ti ti-circle-check"></i>
+    </div>
+    <p class="success-title">¡Incidente reportado!</p>
+    <p class="success-msg">
+      El administrador ha sido notificado y revisará el caso.
+    </p>
+
+    <div class="success-info">
+      <div class="info-item">
+        <span class="lbl">Tipo</span>
+        <span class="val">{{ getEtiquetaTipo(incidenteCreado.tipo) }}</span>
+      </div>
+      <div class="info-item" *ngIf="incidenteCreado.codigoEspacio">
+        <span class="lbl">Espacio</span>
+        <span class="val">{{ incidenteCreado.codigoEspacio }}</span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Estado</span>
+        <span class="val">
+          <span class="badge b-open">ABIERTO</span>
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Reportado</span>
+        <span class="val">Ahora</span>
+      </div>
+    </div>
+
+    <div class="success-loader">
+      <div class="spinner-sm"></div>
+      <span>Redirigiendo al dashboard...</span>
+    </div>
+  </div>
+
+</div>

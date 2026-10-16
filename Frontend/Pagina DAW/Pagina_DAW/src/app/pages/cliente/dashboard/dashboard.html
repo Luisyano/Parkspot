@@ -1,0 +1,204 @@
+<div class="pad">
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando tus datos...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- Contenido -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <!-- Saludo -->
+    <div class="welcome-section">
+      <div>
+        <p class="welcome-title">👋 Hola, {{ usuario?.nombres || 'Usuario' }}</p>
+        <p class="welcome-subtitle">Esto es lo que tienes activo ahora mismo.</p>
+      </div>
+      <div class="welcome-date">
+        <i class="ti ti-calendar"></i>
+        <span>{{ fechaActual }}</span>
+      </div>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="grid grid-3 summary-grid">
+
+      <!-- RESERVA ACTIVA -->
+      <div class="card active-card" *ngIf="reservaActiva; else sinReservaActiva">
+        <div class="card-label">
+          <i class="ti ti-car"></i>
+          <span>Reserva activa</span>
+        </div>
+        <div class="value">{{ reservaActiva.codigoEspacio }}</div>
+        <div class="kicker">Desde {{ formatearHora(reservaActiva.fechaInicio) }} · {{ reservaActiva.nombrePlan }}</div>
+        <div class="card-status available">● En curso</div>
+      </div>
+      <ng-template #sinReservaActiva>
+        <div class="card soft">
+          <div class="card-label">
+            <i class="ti ti-car-off"></i>
+            <span>Sin reserva activa</span>
+          </div>
+          <div class="value">—</div>
+          <div class="kicker">Reserva un espacio ahora</div>
+          <button class="btn-reservar-rapido" routerLink="/cliente/buscar">Buscar espacio</button>
+        </div>
+      </ng-template>
+
+      <!-- MEMBRESÍA -->
+      <div class="card soft">
+        <div class="card-label">
+          <i class="ti ti-calendar-star"></i>
+          <span>Membresía</span>
+        </div>
+        <div class="value">{{ membresiaActiva }}</div>
+        <div class="expire" *ngIf="venceMembresia > 0">⏳ Vence en {{ venceMembresia }} días</div>
+        <div class="expire" *ngIf="venceMembresia === 0 && membresiaActiva !== 'Sin membresía activa'">⏳ Sin vencimiento</div>
+        <div class="expire" *ngIf="venceMembresia === 0 && membresiaActiva === 'Sin membresía activa'">Sin membresía activa</div>
+      </div>
+
+      <!-- GASTOS -->
+      <div class="card soft">
+        <div class="card-label">
+          <i class="ti ti-receipt"></i>
+          <span>Este mes</span>
+        </div>
+        <div class="value">S/ {{ gastosMes.toFixed(2) }} gastados</div>
+        <div class="kicker">{{ totalReservas }} reservas</div>
+      </div>
+
+    </div>
+
+    <!-- ACCIONES RÁPIDAS -->
+    <p class="section-title">⚡ Acciones rápidas</p>
+
+    <div class="grid grid-4 quick-grid">
+
+      <div class="card soft quick-card" routerLink="/cliente/buscar">
+        <div class="quick-icon"><i class="ti ti-search"></i></div>
+        <div class="quick-label">Buscar espacio</div>
+      </div>
+
+      <div class="card soft quick-card" routerLink="/cliente/reserva">
+        <div class="quick-icon"><i class="ti ti-ticket"></i></div>
+        <div class="quick-label">Reservar de nuevo</div>
+      </div>
+
+      <div class="card soft quick-card" routerLink="/cliente/membresias">
+        <div class="quick-icon"><i class="ti ti-refresh"></i></div>
+        <div class="quick-label">Renovar membresía</div>
+      </div>
+
+      <div class="card soft quick-card" routerLink="/cliente/movil">
+        <div class="quick-icon"><i class="ti ti-car"></i></div>
+        <div class="quick-label">Agregar vehículo</div>
+      </div>
+
+    </div>
+
+    <!-- RESERVAS RECIENTES -->
+    <div class="section-header">
+      <p class="section-title">📋 Mis reservas recientes</p>
+      <a routerLink="/cliente/mis-reservas" class="ver-todas">Ver todas →</a>
+    </div>
+
+    <div class="card list-card">
+
+      <div class="list-row" *ngFor="let reserva of reservasRecientes">
+        <div class="l">
+          <div class="list-icon" [class.active]="reserva.estado === 'ACTIVA'">
+            <i class="ti ti-map-pin"></i>
+          </div>
+          <div>
+            <div class="t">{{ reserva.codigoEspacio }}</div>
+            <div class="s">
+              {{ formatearFecha(reserva.fechaInicio) }} · 
+              {{ formatearHora(reserva.fechaInicio) }} · 
+              {{ reserva.nombrePlan }}
+            </div>
+          </div>
+        </div>
+        <span class="badge {{ getBadgeClass(reserva.estado) }}">
+          {{ getBadgeText(reserva.estado) }}
+        </span>
+      </div>
+
+      <div class="list-row empty" *ngIf="reservasRecientes.length === 0">
+        <div class="l">
+          <i class="ti ti-inbox"></i>
+          <div>
+            <div class="t">No tienes reservas</div>
+            <div class="s">Reserva tu primer espacio</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- VEHÍCULOS + CONADIS -->
+    <div class="grid grid-2 bottom-grid">
+
+      <!-- VEHÍCULOS -->
+      <div>
+        <p class="section-title">🚗 Mis vehículos</p>
+        <div class="card list-card">
+
+          <div class="list-row" *ngFor="let v of vehiculos">
+            <div class="l">
+              <div class="vehicle-icon">
+                <i class="ti ti-car"></i>
+              </div>
+              <div>
+                <div class="t">{{ v.placa }}</div>
+                <div class="s">{{ v.modelo || 'Sin modelo' }}</div>
+              </div>
+            </div>
+            <span class="badge badge-neutral">Principal</span>
+          </div>
+
+          <div class="list-row empty" *ngIf="vehiculos.length === 0">
+            <div class="l">
+              <i class="ti ti-car-off"></i>
+              <div>
+                <div class="t">Sin vehículos</div>
+                <div class="s">Agrega tu primer vehículo</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CONADIS -->
+      <div>
+        <p class="section-title">♿ Verificación CONADIS</p>
+        <div class="card conadis" [class.verified]="usuario?.conadisVerificado">
+          <div class="conadis-icon">
+            <i class="ti ti-wheelchair"></i>
+          </div>
+          <div>
+            <div class="t">
+              {{ usuario?.conadisVerificado ? '✅ Carnet verificado' : '❌ No verificado' }}
+            </div>
+            <div class="s">
+              {{ usuario?.conadisVerificado ? 'Válido para espacios accesibles' : 'Registra tu carnet CONADIS' }}
+            </div>
+            <button *ngIf="!usuario?.conadisVerificado" class="btn-verificar" routerLink="/cliente/perfil">
+              Verificar ahora
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

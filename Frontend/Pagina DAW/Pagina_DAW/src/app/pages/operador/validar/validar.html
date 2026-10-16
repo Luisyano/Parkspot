@@ -1,0 +1,116 @@
+<div class="content">
+
+  <div class="welcome-section">
+    <p class="welcome-title">Validar ticket</p>
+    <p class="welcome-subtitle">Busca el ticket por código para validar el ingreso</p>
+  </div>
+
+  <!-- ============================================
+       BUSCADOR
+       ============================================ -->
+  <div class="card">
+    <div class="t">Buscar ticket</div>
+
+    <div class="search-row">
+      <input
+        type="text"
+        [(ngModel)]="codigoBusqueda"
+        (keyup.enter)="buscarTicket()"
+        placeholder="Ej: PS-2026-07-28-00123"
+        [disabled]="buscando">
+
+      <button class="btn btn-accent" (click)="buscarTicket()" [disabled]="buscando">
+        <i class="ti" [ngClass]="buscando ? 'ti-loader-2' : 'ti-search'"></i>
+        {{ buscando ? 'Buscando...' : 'Buscar' }}
+      </button>
+
+      <button class="btn btn-ghost" (click)="limpiar()" [disabled]="buscando || !ticketEncontrado">
+        <i class="ti ti-x"></i>
+        Limpiar
+      </button>
+    </div>
+
+    <!-- ESCANEAR QR (placeholder) -->
+    <div class="qr-hint">
+      <i class="ti ti-qrcode"></i>
+      <span>También puedes usar el escáner QR próximamente</span>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="alert-error" *ngIf="errorMensaje">
+    <i class="ti ti-alert-circle"></i>
+    {{ errorMensaje }}
+  </div>
+
+  <!-- ============================================
+       RESULTADO
+       ============================================ -->
+  <div class="card ticket-card" *ngIf="ticketEncontrado">
+
+    <div class="ticket-header">
+      <div>
+        <div class="code-label">Código de ticket</div>
+        <div class="code">{{ ticketEncontrado.codigo }}</div>
+      </div>
+      <span class="badge" [ngClass]="getEstadoBadgeClass(ticketEncontrado)">
+        {{ getEstadoTexto(ticketEncontrado) }}
+      </span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="lbl">Usuario</span>
+        <span class="val">{{ ticketEncontrado.nombreUsuario || '—' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Vehículo</span>
+        <span class="val">{{ ticketEncontrado.placaVehiculo || '—' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Espacio</span>
+        <span class="val">{{ ticketEncontrado.codigoEspacio || '—' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Monto pagado</span>
+        <span class="val">S/ {{ ticketEncontrado.montoPagado | number:'1.2-2' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Fecha de ingreso</span>
+        <span class="val">{{ formatearFecha(ticketEncontrado.fechaIngresoReal) }}</span>
+      </div>
+      <div class="info-item">
+        <span class="lbl">Fecha de salida</span>
+        <span class="val">{{ formatearFecha(ticketEncontrado.fechaSalidaReal) }}</span>
+      </div>
+      <div class="info-item" *ngIf="ticketEncontrado.cobroAdicional > 0">
+        <span class="lbl">Cobro adicional</span>
+        <span class="val text-warning">S/ {{ ticketEncontrado.cobroAdicional | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="ticket-actions" *ngIf="getEstadoTicket(ticketEncontrado) === 'PENDIENTE'">
+      <button class="btn btn-success" (click)="irAIngreso()">
+        <i class="ti ti-circle-check"></i>
+        Confirmar ingreso
+      </button>
+      <button class="btn btn-ghost">
+        <i class="ti ti-x"></i>
+        Rechazar
+      </button>
+    </div>
+
+    <div class="ticket-info-msg" *ngIf="getEstadoTicket(ticketEncontrado) === 'INGRESADO'">
+      <i class="ti ti-info-circle"></i>
+      Este vehículo ya ingresó. Debe usar "Registrar salida" para finalizarlo.
+    </div>
+
+    <div class="ticket-info-msg" *ngIf="getEstadoTicket(ticketEncontrado) === 'SALIDO'">
+      <i class="ti ti-check"></i>
+      Este ticket ya fue usado y el vehículo ya salió.
+    </div>
+
+  </div>
+
+</div>

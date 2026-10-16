@@ -1,0 +1,87 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando sedes...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <div class="frame">
+      <div class="content-inner">
+
+        <!-- TOOLBAR -->
+        <div class="table-toolbar">
+
+          <div class="filters">
+            <select [(ngModel)]="filtroEstado">
+              <option value="TODOS">Todos los estados</option>
+              <option value="ACTIVA">Activa</option>
+              <option value="PAUSADA">Pausada</option>
+              <option value="INACTIVA">Inactiva</option>
+            </select>
+
+            <select [(ngModel)]="filtroDistrito">
+              <option value="TODOS">Todos los distritos</option>
+              <option *ngFor="let d of distritosUnicos" [value]="d">{{ d }}</option>
+            </select>
+          </div>
+
+          <button class="btn btn-accent" disabled title="No disponible aún">
+            <i class="ti ti-plus"></i> Nueva sede
+          </button>
+
+        </div>
+
+        <!-- TABLA -->
+        <table>
+          <thead>
+            <tr>
+              <th>Sede</th>
+              <th>Distrito</th>
+              <th>Horario</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sede of sedesFiltradas">
+              <td>
+                <div class="cell-main">{{ sede.nombre }}</div>
+                <div class="cell-sub">{{ sede.direccion }}</div>
+              </td>
+              <td>{{ sede.distrito }}</td>
+              <td>
+                <span class="horario">
+                  <i class="ti ti-clock"></i>
+                  {{ formatearHora(sede.horaApertura) }} - {{ formatearHora(sede.horaCierre) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getBadgeClass(sede.estado)">
+                  {{ getBadgeText(sede.estado) }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="sedesFiltradas.length === 0">
+              <td colspan="4" class="empty-msg">
+                No hay sedes que coincidan con los filtros.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

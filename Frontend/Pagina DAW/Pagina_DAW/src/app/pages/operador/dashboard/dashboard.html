@@ -1,0 +1,146 @@
+<div class="content">
+
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando dashboard...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!cargando && !errorMensaje">
+
+    <!-- BIENVENIDA -->
+    <div class="welcome-section">
+      <p class="welcome-title">Bienvenido, {{ nombreOperador }}</p>
+      <p class="welcome-subtitle">{{ horaActual }} · Sede #{{ sedeId }}</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="l">Total espacios</div>
+        <div class="v">{{ totalEspacios }}</div>
+      </div>
+      <div class="kpi k-av">
+        <div class="l">Disponibles</div>
+        <div class="v">{{ disponibles }}</div>
+        <div class="p">{{ getPorcentaje(disponibles) }}%</div>
+      </div>
+      <div class="kpi k-res">
+        <div class="l">Reservados</div>
+        <div class="v">{{ reservados }}</div>
+        <div class="p">{{ getPorcentaje(reservados) }}%</div>
+      </div>
+      <div class="kpi k-occ">
+        <div class="l">Ocupados</div>
+        <div class="v">{{ ocupados }}</div>
+        <div class="p">{{ getPorcentaje(ocupados) }}%</div>
+      </div>
+    </div>
+
+    <!-- ACCIONES RÁPIDAS (5 botones) -->
+    <div class="qa-grid">
+      <a class="qa" routerLink="/operador/validar">
+        <i class="ti ti-ticket"></i>
+        <div class="t">Validar ticket</div>
+      </a>
+      <a class="qa" routerLink="/operador/salida">
+        <i class="ti ti-car"></i>
+        <div class="t">Registrar salida</div>
+      </a>
+      <a class="qa" routerLink="/operador/mapa">
+        <i class="ti ti-map"></i>
+        <div class="t">Ver mapa</div>
+      </a>
+      <a class="qa" routerLink="/operador/incidente">
+        <i class="ti ti-alert-triangle"></i>
+        <div class="t">Reportar incidente</div>
+      </a>
+      <a class="qa" routerLink="/operador/alertas">
+        <i class="ti ti-bell"></i>
+        <div class="t">Ver alertas</div>
+      </a>
+    </div>
+
+    <!-- TICKETS PENDIENTES -->
+    <div class="card" *ngIf="ticketsPendientes.length > 0">
+      <div class="t">
+        Tickets pendientes de validación ({{ ticketsPendientes.length }})
+      </div>
+
+      <div class="ticket-row" *ngFor="let t of ticketsPendientes">
+        <div>
+          <div class="code">{{ t.codigoEspacio || '—' }}</div>
+          <div class="name">
+            {{ t.nombreUsuario || 'Usuario' }} · {{ t.placaVehiculo || '—' }}
+          </div>
+          <div class="sub">
+            {{ formatearHora(t.fechaInicio) }} – {{ formatearHora(t.fechaFin) }}
+            · {{ t.nombrePlan || '—' }}
+          </div>
+        </div>
+        <!-- ✅ CORREGIDO: apunta a /operador/validar -->
+        <a class="btn btn-success" routerLink="/operador/validar">
+          Validar ingreso
+        </a>
+      </div>
+    </div>
+
+    <!-- SIN TICKETS -->
+    <div class="card empty-card" *ngIf="ticketsPendientes.length === 0">
+      <i class="ti ti-inbox"></i>
+      <p>No hay tickets pendientes de validación</p>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="card" *ngIf="incidentes.length > 0">
+      <div class="t">Alertas activas ({{ incidentes.length }})</div>
+
+      <div class="alert-row" *ngFor="let i of incidentes">
+        <i [class]="getIconoIncidente(i.tipo)"
+           [ngClass]="i.estado === 'ABIERTO' ? 'alert-warning' : 'alert-info'"></i>
+        <div>
+          <div class="alert-title">
+            {{ getTipoIncidenteTexto(i.tipo) }}
+            <span *ngIf="i.codigoEspacio"> en {{ i.codigoEspacio }}</span>
+          </div>
+          <div class="alert-sub">
+            {{ i.descripcion | slice:0:60 }}{{ i.descripcion?.length > 60 ? '...' : '' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIN ALERTAS -->
+    <div class="card empty-card" *ngIf="incidentes.length === 0">
+      <i class="ti ti-circle-check" style="color: var(--available);"></i>
+      <p>Sin alertas activas</p>
+    </div>
+
+    <!-- OCUPACIÓN POR PISO -->
+    <div class="card" *ngIf="ocupacionPorPiso.length > 0">
+      <div class="t">Ocupación por piso</div>
+
+      <div class="row-flex" *ngFor="let p of ocupacionPorPiso">
+        <span class="lbl">Piso {{ p.piso }}</span>
+        <div class="mini-bar-wrap">
+          <div class="mini-bar-track">
+            <div class="mini-bar-fill"
+                 [style.width.%]="p.porcentaje"
+                 [style.background]="getColorOcupacion(p.porcentaje)">
+            </div>
+          </div>
+          <span class="mini-text">{{ p.ocupados }}/{{ p.total }} · {{ p.porcentaje }}%</span>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

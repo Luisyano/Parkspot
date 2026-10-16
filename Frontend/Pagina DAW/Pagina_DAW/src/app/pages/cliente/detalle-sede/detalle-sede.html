@@ -1,0 +1,139 @@
+<main class="detalle-container">
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando detalles de la sede...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMensaje" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+    <a routerLink="/cliente/buscar" class="volver-btn">Volver a buscar</a>
+  </div>
+
+  <!-- Contenido -->
+  <ng-container *ngIf="!cargando && !errorMensaje && sede">
+
+    <a routerLink="/cliente/buscar" class="volver">
+      ← Volver a buscar
+    </a>
+
+    <section class="sede">
+
+      <div class="imagen-sede">
+        <span>{{ sede.distrito }}</span>
+      </div>
+
+      <div class="informacion">
+
+        <h1>{{ sede.nombre }}</h1>
+
+        <p class="ubicacion">
+          📍 {{ sede.direccion }}
+        </p>
+
+        <p class="descripcion">
+          Estacionamiento equipado con instalaciones modernas
+          para brindar seguridad y comodidad a tus vehículos.
+        </p>
+
+        <div class="datos">
+
+          <div>
+            <strong>{{ getTotalEspacios() }}</strong>
+            <span>Espacios totales</span>
+          </div>
+
+          <div>
+            <strong>{{ getEspaciosDisponibles() }}</strong>
+            <span>Disponibles</span>
+          </div>
+
+          <div>
+            <strong>{{ getPorcentajeDisponible() }}%</strong>
+            <span>Ocupación</span>
+          </div>
+
+          <div>
+            <strong>{{ sede.horaApertura }} - {{ sede.horaCierre }}</strong>
+            <span>Horario</span>
+          </div>
+
+        </div>
+
+        <!-- Horarios disponibles (sugerencia) -->
+        <div class="horarios">
+          <h2>Horarios disponibles</h2>
+          <div class="horario-lista">
+            <span>08:00 - 10:00</span>
+            <span>10:00 - 12:00</span>
+            <span>14:00 - 16:00</span>
+            <span>16:00 - 18:00</span>
+            <span>18:00 - 20:00</span>
+          </div>
+        </div>
+
+<button class="btn-reservar" routerLink="/cliente/mapa/{{ sede?.id }}">
+  Seleccionar espacio
+</button>
+
+      </div>
+
+    </section>
+
+    <!-- Mapa de espacios por piso -->
+    <section class="espacios" *ngIf="espaciosAgrupados.length > 0">
+      <h2>Mapa de espacios</h2>
+
+      <div *ngFor="let grupo of espaciosAgrupados" class="piso-section">
+        <h3>{{ grupo.piso }}</h3>
+        <div class="espacios-grid">
+          <div *ngFor="let espacio of grupo.espacios" class="espacio-card" [class]="getEstadoBadge(espacio.estado)">
+            <div class="espacio-codigo">{{ espacio.codigo }}</div>
+            <div class="espacio-icono">{{ getTipoIcono(espacio.tipo) }}</div>
+            <div class="espacio-estado">{{ getEstadoTexto(espacio.estado) }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Servicios -->
+    <section class="servicios">
+
+      <h2>Servicios de la sede</h2>
+
+      <div class="servicios-grid">
+
+        <div class="servicio">
+          <span>🅿️</span>
+          <h3>Estacionamiento</h3>
+          <p>Espacios seguros y amplios para tu vehículo.</p>
+        </div>
+
+        <div class="servicio">
+          <span>🚗</span>
+          <h3>Acceso 24/7</h3>
+          <p>Entrada y salida las 24 horas del día.</p>
+        </div>
+
+        <div class="servicio">
+          <span>🛡️</span>
+          <h3>Seguridad</h3>
+          <p>Personal encargado de la seguridad de la sede.</p>
+        </div>
+
+        <div class="servicio">
+          <span>♿</span>
+          <h3>Espacios CONADIS</h3>
+          <p>Espacios accesibles para personas con discapacidad.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </ng-container>
+
+</main>

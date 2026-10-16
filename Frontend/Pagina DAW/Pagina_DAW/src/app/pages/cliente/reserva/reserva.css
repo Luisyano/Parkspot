@@ -1,0 +1,310 @@
+* {
+  box-sizing: border-box;
+}
+
+.reserva-container {
+  min-height: 100vh;
+  background: var(--page);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  padding: 30px 24px 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.titulo h1 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.titulo p {
+  color: var(--ink-3);
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+/* Mensajes de error/éxito */
+.error-mensaje,
+.exito-mensaje {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+.error-mensaje {
+  background: var(--occupied-bg);
+  border: 1px solid var(--occupied);
+  color: var(--occupied);
+}
+.exito-mensaje {
+  background: var(--available-bg);
+  border: 1px solid var(--available);
+  color: var(--available);
+}
+
+.btn-volver-mapa {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+.btn-volver-mapa:hover {
+  background: var(--navy-light);
+}
+
+/* Loading */
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+.loading-state i {
+  font-size: 40px;
+  color: var(--navy);
+  animation: spin 1s linear infinite;
+  display: block;
+  margin-bottom: 16px;
+}
+.loading-state p {
+  color: var(--ink-3);
+  font-size: 14px;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.reserva-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.06);
+}
+.card h2 {
+  margin: 0 0 22px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.estacionamiento {
+  grid-column: span 2;
+}
+.estacionamiento-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  background: var(--page);
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+.icono {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--info-bg);
+  border-radius: 50%;
+  font-size: 25px;
+}
+.estacionamiento-info h3 {
+  margin: 0 0 5px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.estacionamiento-info p {
+  margin: 0;
+  color: var(--ink-3);
+}
+
+.detalle {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+.detalle div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.detalle span {
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.detalle strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.campo label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  background: var(--card);
+  color: var(--ink);
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 2px rgba(18, 41, 74, 0.1);
+}
+textarea {
+  resize: vertical;
+}
+.horarios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.resumen-linea {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 0;
+  font-size: 14px;
+}
+.resumen-linea span {
+  color: var(--ink-3);
+}
+.resumen-linea strong {
+  text-align: right;
+  color: var(--ink);
+}
+.separador {
+  height: 1px;
+  background: var(--line);
+  margin: 15px 0;
+}
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.total span {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.total strong {
+  font-size: 24px;
+  color: var(--navy);
+}
+
+.btn-reservar {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 7px;
+  background: var(--accent);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-reservar:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+.btn-reservar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--ink-2);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn-cancelar:hover {
+  background: var(--page);
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .reserva-container {
+    padding: 16px;
+  }
+  .reserva-grid {
+    grid-template-columns: 1fr;
+  }
+  .estacionamiento {
+    grid-column: span 1;
+  }
+  .detalle {
+    grid-template-columns: 1fr;
+  }
+  .titulo h1 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 500px) {
+  .horarios {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   INFO PLAN (mensual/anual)
+========================= */
+.info-plan {
+  background: var(--info-bg);
+  border: 1px solid var(--info);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--info);
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.info-plan i {
+  font-size: 18px;
+}

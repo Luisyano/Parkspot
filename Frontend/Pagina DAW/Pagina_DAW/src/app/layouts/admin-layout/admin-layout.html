@@ -1,0 +1,47 @@
+<div class="admin-shell">
+  <div class="sidebar">
+    <div class="logo"><i class="ti ti-parking"></i>ParkSpot Admin</div>
+    
+    <a routerLink="/admin/dashboard" routerLinkActive="on" class="item">
+      <i class="ti ti-layout-dashboard"></i>Dashboard
+    </a>
+    
+    <a routerLink="/admin/sedes" routerLinkActive="on" class="item">
+      <i class="ti ti-building"></i>Sedes <span class="count">12</span>
+    </a>
+    
+    
+    <a routerLink="/admin/operadores" routerLinkActive="on" class="item">
+      <i class="ti ti-user-shield"></i>Operadores <span class="count">8</span>
+    </a>
+    
+    <a routerLink="/admin/incidentes" routerLinkActive="on" class="item">
+      <i class="ti ti-alert-triangle"></i>Incidentes <span class="count alert">3</span>
+    </a>
+    
+    <a routerLink="/admin/reportes" routerLinkActive="on" class="item">
+      <i class="ti ti-chart-bar"></i>Reportes
+    </a>
+    
+    <!-- ✅ BOTÓN CERRAR SESIÓN -->
+    <div class="item logout" (click)="cerrarSesion()">
+      <i class="ti ti-logout"></i>Cerrar sesión
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <span class="title">Panel de administración</span>
+        <span class="date">28 jul 2026</span>
+      </div>
+      <div class="right">
+        <div class="bell"><i class="ti ti-bell"></i><span class="dot"></span></div>
+        <div class="user"><div class="avatar">AD</div></div>
+      </div>
+    </div>
+    <div class="content">
+      <router-outlet />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<main class="reserva-container">
+  <div class="titulo">
+    <h1>Reservar estacionamiento</h1>
+    <p>Completa los datos para realizar tu reserva.</p>
+  </div>
+
+  <!-- ✅ Mensaje de error visible -->
+  <div *ngIf="errorMensaje" class="error-mensaje">
+    <div class="error-content">
+      <i class="ti ti-alert-circle"></i>
+      <span class="error-text">{{ errorMensaje }}</span>
+    </div>
+    <button *ngIf="errorMensaje.includes('disponible') || errorMensaje.includes('ocupado')"
+            class="btn-volver-mapa"
+            (click)="volverAlMapa()">
+      <i class="ti ti-arrow-left"></i> Volver al mapa
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando datos...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="reserva-grid">
+    <section class="card estacionamiento">
+      <h2>Estacionamiento seleccionado</h2>
+      <div class="estacionamiento-info">
+        <div class="icono">🅿️</div>
+        <div>
+          <h3>{{ espacio?.codigo || 'Espacio' }}</h3>
+          <p>{{ planNombre }} · S/ {{ precioPorHora.toFixed(2) }} / hora</p>
+        </div>
+      </div>
+      <div class="detalle">
+        <div><span>Espacio</span><strong>{{ espacio?.codigo || '—' }}</strong></div>
+        <div><span>Tipo</span><strong>{{ espacio?.tipo || 'Regular' }}</strong></div>
+        <div><span>Tarifa</span><strong>S/ {{ precioPorHora.toFixed(2) }} / hora</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Datos de la reserva</h2>
+      <div class="formulario">
+        <div class="campo">
+          <label for="fecha">Fecha</label>
+          <input id="fecha" type="date" [(ngModel)]="fecha" (change)="calcularTotal()">
+        </div>
+
+        <div *ngIf="!mostrarHoras" class="info-plan">
+          <i class="ti ti-info-circle"></i>
+          Para planes mensuales o anuales, solo se requiere la fecha de inicio. El período se calculará automáticamente.
+        </div>
+
+        <div class="horarios" *ngIf="mostrarHoras">
+          <div class="campo">
+            <label for="horaInicio">Hora de ingreso</label>
+            <input id="horaInicio" type="time" [(ngModel)]="horaInicio" (change)="calcularTotal()">
+          </div>
+          <div class="campo">
+            <label for="horaFin">Hora de salida</label>
+            <input id="horaFin" type="time" [(ngModel)]="horaFin" (change)="calcularTotal()">
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="vehiculo">Vehículo</label>
+          <input id="vehiculo" type="text" [value]="vehiculoPlaca" disabled>
+        </div>
+        <div class="campo">
+          <label for="observacion">Observación</label>
+          <textarea id="observacion" rows="3" placeholder="Escribe alguna observación (opcional)" [(ngModel)]="observacion"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="card resumen">
+      <h2>Resumen de reserva</h2>
+      <div class="resumen-linea"><span>Estacionamiento</span><strong>{{ espacio?.codigo || '—' }}</strong></div>
+      <div class="resumen-linea"><span>Vehículo</span><strong>{{ vehiculoPlaca }}</strong></div>
+      <div class="resumen-linea"><span>Plan</span><strong>{{ planNombre }}</strong></div>
+      <div class="resumen-linea"><span>Fecha</span><strong>{{ fecha || 'Selecciona una fecha' }}</strong></div>
+      <div class="resumen-linea" *ngIf="mostrarHoras"><span>Horario</span><strong>{{ horaInicio || '--:--' }} - {{ horaFin || '--:--' }}</strong></div>
+      <div class="resumen-linea" *ngIf="!mostrarHoras"><span>Período</span><strong>{{ planNombre === 'MENSUAL' ? '30 días' : '365 días' }}</strong></div>
+      <div class="separador"></div>
+      <div class="total">
+        <span>Total estimado</span>
+        <strong>S/ {{ totalEstimado.toFixed(2) }}</strong>
+      </div>
+      <button class="btn-reservar" (click)="confirmarReserva()" [disabled]="procesando">
+        {{ procesando ? 'Creando reserva...' : 'Confirmar reserva' }}
+      </button>
+      <button class="btn-cancelar" routerLink="/cliente/buscar">Cancelar</button>
+    </section>
+  </div>
+</main>

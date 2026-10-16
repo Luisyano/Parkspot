@@ -1,0 +1,106 @@
+<main class="buscar-container">
+  <section class="titulo">
+    <h1>Buscar sedes</h1>
+    <p>Encuentra la sede perfecta para realizar tu reserva.</p>
+  </section>
+
+  <section class="busqueda">
+    <div class="campo-busqueda">
+      <label>¿Qué estás buscando?</label>
+      <input
+        type="text"
+        [(ngModel)]="textoBusqueda"
+        (input)="buscar()"
+        placeholder="Buscar por nombre o ubicación..."
+      />
+    </div>
+
+    <div class="campo">
+      <label>Distrito</label>
+      <select [(ngModel)]="distritoSeleccionado" (change)="buscar()">
+        <option value="todos">Todos los distritos</option>
+        <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Tipo de espacio</label>
+      <select [(ngModel)]="tipoSeleccionado" (change)="buscar()">
+        <option value="todos">Todos los tipos</option>
+        <option *ngFor="let t of tiposEspacio" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+
+    <button class="btn-buscar" (click)="buscar()">
+      Buscar
+    </button>
+  </section>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Buscando sedes...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMensaje && !cargando" class="error-state">
+    <i class="ti ti-alert-circle"></i>
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <!-- Resultados -->
+  <section class="resultados" *ngIf="!cargando && !errorMensaje">
+    <div class="resultado-header">
+      <h2>Sedes disponibles</h2>
+      <span>{{ sedesFiltradas.length }} resultados</span>
+    </div>
+
+    <div class="cards">
+      <!-- SEDE - Usa sedesPaginadas en lugar de sedesFiltradas -->
+      <article class="card" *ngFor="let sede of sedesPaginadas; trackBy: trackBySedeId">
+        <div class="imagen {{ getImagenClass(sede.id) }}">
+          <span>{{ sede.distrito }}</span>
+        </div>
+        <div class="card-body">
+          <h3>{{ sede.nombre }}</h3>
+          <p class="ubicacion">📍 {{ sede.direccion }}</p>
+          <p>
+            {{ obtenerTotalEspacios(sede.id) }} espacios totales ·
+            {{ getDisponibilidadTexto(sede.id) }}
+          </p>
+          <div class="card-footer">
+            <strong>Desde S/ 5.00 / hora</strong>
+            <button routerLink="/cliente/detalle-sede/{{ sede.id }}">Ver sede</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sin resultados -->
+      <div *ngIf="sedesFiltradas.length === 0" class="sin-resultados">
+        <i class="ti ti-search-off"></i>
+        <p>No se encontraron sedes con los filtros seleccionados.</p>
+        <button (click)="resetearFiltros()" class="btn-resetear">Limpiar filtros</button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGINACIÓN (solo si hay más de 1 página)   -->
+    <!-- ========================================== -->
+    <div class="paginacion" *ngIf="sedesFiltradas.length > elementosPorPagina">
+      <button
+        class="btn-pagina"
+        (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual === 1">
+        Anterior
+      </button>
+      <span class="info-pagina">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button
+        class="btn-pagina"
+        (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual === totalPaginas">
+        Siguiente
+      </button>
+    </div>
+
+  </section>
+</main>

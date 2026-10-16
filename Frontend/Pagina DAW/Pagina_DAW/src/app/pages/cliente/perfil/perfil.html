@@ -1,0 +1,200 @@
+<main class="perfil-container">
+
+  <section class="titulo">
+    <h1>Mi perfil</h1>
+    <p>Administra tus datos personales y vehículos registrados.</p>
+  </section>
+
+  <!-- Mensaje de error general -->
+  <div *ngIf="errorMensaje" class="error-mensaje">
+    <i class="ti ti-alert-circle"></i>
+    <span>{{ errorMensaje }}</span>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando tus datos...</p>
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!cargando && !errorMensaje && usuario">
+
+    <!-- DATOS PERSONALES -->
+    <section class="card">
+      <div class="card-title">
+        <div>
+          <h2>Datos personales</h2>
+          <p>Información de tu cuenta ParkSpot.</p>
+        </div>
+        <button class="btn-editar" (click)="abrirEditarPerfil()">Editar</button>
+      </div>
+
+      <div class="perfil-grid">
+        <div class="campo">
+          <label>Nombres</label>
+          <div class="valor">{{ usuario.nombres || '—' }}</div>
+        </div>
+        <div class="campo">
+          <label>Apellidos</label>
+          <div class="valor">{{ usuario.apellidos || '—' }}</div>
+        </div>
+        <div class="campo">
+          <label>Correo electrónico</label>
+          <div class="valor">{{ usuario.email || '—' }}</div>
+        </div>
+        <div class="campo">
+          <label>Celular</label>
+          <div class="valor">{{ usuario.celular || '—' }}</div>
+        </div>
+        <div class="campo">
+          <label>Estado CONADIS</label>
+          <div class="valor">
+            <span class="conadis">{{ getEstadoConadis() }}</span>
+          </div>
+        </div>
+        <!-- Eliminado el campo "Rol" -->
+      </div>
+    </section>
+
+    <!-- VEHÍCULOS -->
+    <section class="card">
+      <div class="card-title">
+        <div>
+          <h2>Mis vehículos</h2>
+          <p>Vehículos asociados a tu cuenta.</p>
+        </div>
+        <button class="btn-agregar" (click)="agregarVehiculo()">+ Agregar vehículo</button>
+      </div>
+
+      <div class="vehiculos" *ngIf="vehiculos.length > 0">
+        <article class="vehiculo" *ngFor="let v of vehiculos; trackBy: trackById">
+          <div class="vehiculo-icono">{{ getIconoVehiculo(v.tipo) }}</div>
+          <div class="vehiculo-info">
+            <h3>{{ v.placa }}</h3>
+            <p>{{ v.tipo }} · {{ v.modelo || 'Sin modelo' }}</p>
+          </div>
+          <button class="btn-secundario" (click)="editarVehiculo(v)">Editar</button>
+        </article>
+      </div>
+
+      <div *ngIf="vehiculos.length === 0" class="sin-vehiculos">
+        <p style="color:var(--ink-3); text-align:center; padding:20px 0;">
+          <i class="ti ti-car-off" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+          Aún no tienes vehículos registrados.
+        </p>
+      </div>
+    </section>
+
+    <!-- SEGURIDAD -->
+    <section class="card">
+      <div class="card-title">
+        <div>
+          <h2>Seguridad</h2>
+          <p>Administra la seguridad de tu cuenta.</p>
+        </div>
+      </div>
+
+      <div class="seguridad">
+        <div>
+          <strong>Contraseña</strong>
+          <p>Cambia periódicamente tu contraseña para mantener segura tu cuenta.</p>
+        </div>
+        <button class="btn-secundario" (click)="abrirCambiarContrasena()">Cambiar contraseña</button>
+      </div>
+    </section>
+
+    <!-- CERRAR SESIÓN -->
+    <div class="cerrar-sesion">
+      <button (click)="cerrarSesion()">Cerrar sesión</button>
+    </div>
+
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL: EDITAR PERFIL (CON CONADIS Y CORREO BLOQUEADO) -->
+  <!-- ========================================================== -->
+  <div *ngIf="editModalVisible" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Editar perfil</h2>
+        <button class="modal-close" (click)="cerrarEditarPerfil()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="errorMensaje" class="modal-error">{{ errorMensaje }}</div>
+        <div class="campo-form">
+          <label>Nombres *</label>
+          <input type="text" [(ngModel)]="editNombres" placeholder="Mateo">
+        </div>
+        <div class="campo-form">
+          <label>Apellidos *</label>
+          <input type="text" [(ngModel)]="editApellidos" placeholder="Gutierrez Paz">
+        </div>
+        <div class="campo-form">
+          <label>Correo electrónico *</label>
+          <input type="email" [(ngModel)]="editEmail" placeholder="mateo@correo.com" readonly>
+          <small style="color:var(--ink-3);">El correo no se puede modificar.</small>
+        </div>
+        <div class="campo-form">
+          <label>Celular</label>
+          <input type="text" [(ngModel)]="editCelular" placeholder="+51 987 654 321">
+        </div>
+        <div class="campo-form" style="margin-top:12px; border-top:1px solid var(--line); padding-top:16px;">
+          <label style="font-weight:600; color:var(--ink);">Verificación CONADIS</label>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+              <input type="checkbox" [(ngModel)]="editConadisVerificado">
+              <span>Verificado</span>
+            </label>
+            <span style="color:var(--ink-3); font-size:12px;">Activa esta opción si tienes carnet CONADIS.</span>
+          </div>
+          <div style="margin-top:8px;">
+            <label style="font-size:13px; color:var(--ink-2);">URL de la imagen (opcional)</label>
+            <input type="text" [(ngModel)]="editConadisImagenUrl" placeholder="https://ejemplo.com/conadis.jpg" style="margin-top:4px;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="cerrarEditarPerfil()">Cancelar</button>
+        <button class="btn-guardar" (click)="guardarEditarPerfil()" [disabled]="editCargando">
+          {{ editCargando ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL: CAMBIAR CONTRASEÑA -->
+  <!-- ========================================================== -->
+  <div *ngIf="passModalVisible" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Cambiar contraseña</h2>
+        <button class="modal-close" (click)="cerrarCambiarContrasena()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="passError" class="modal-error">{{ passError }}</div>
+        <div class="campo-form">
+          <label>Contraseña actual *</label>
+          <input type="password" [(ngModel)]="passActual" placeholder="••••••••••">
+        </div>
+        <div class="campo-form">
+          <label>Nueva contraseña *</label>
+          <input type="password" [(ngModel)]="passNueva" placeholder="••••••••••">
+          <small style="color:var(--ink-3);">Mínimo 8 caracteres</small>
+        </div>
+        <div class="campo-form">
+          <label>Confirmar nueva contraseña *</label>
+          <input type="password" [(ngModel)]="passConfirmar" placeholder="••••••••••">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="cerrarCambiarContrasena()">Cancelar</button>
+        <button class="btn-guardar" (click)="guardarCambiarContrasena()" [disabled]="passCargando">
+          {{ passCargando ? 'Guardando...' : 'Cambiar contraseña' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>

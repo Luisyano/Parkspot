@@ -1,0 +1,83 @@
+<main class="membresias-container">
+
+  <section class="titulo">
+    <h1>Membresías</h1>
+    <p>Administra tus planes de estacionamiento recurrente.</p>
+  </section>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="errorMensaje" class="error-mensaje">
+    <i class="ti ti-alert-circle"></i>
+    <span>{{ errorMensaje }}</span>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando" class="loading-state">
+    <i class="ti ti-loader"></i>
+    <p>Cargando tus membresías...</p>
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!cargando && !errorMensaje">
+
+    <!-- Membresía activa (incluye PENDIENTE) -->
+    <section class="membresia-activa" *ngIf="membresiaActiva">
+      <div class="card active-plan" [class.pending-plan]="esPendiente">
+        <div class="plan-header">
+          <div>
+            <h2>Plan {{ nombrePlanActivo }} · {{ membresiaActiva.codigoEspacio || 'Estacionamiento' }}</h2>
+            <p class="periodo">
+              Periodo: {{ formatearFecha(membresiaActiva.fechaInicio) }} – {{ formatearFecha(membresiaActiva.fechaFin) }}
+              · Vehículo {{ membresiaActiva.placaVehiculo || '—' }}
+            </p>
+          </div>
+          <!-- Badge según estado -->
+          <span class="badge" [class.badge-reserved]="!esPendiente" [class.badge-pending]="esPendiente">
+            {{ esPendiente ? 'Pendiente de pago' : 'Vence en ' + diasRestantes + ' días' }}
+          </span>
+        </div>
+        <div class="plan-footer">
+          <span>
+            <span *ngIf="esPendiente" style="color:var(--reserved);">⏳ Pendiente de confirmación</span>
+            <span *ngIf="!esPendiente">
+              Pagado: S/ {{ precioPagado.toFixed(2) }}
+              <span class="descuento" *ngIf="descuentoAplicado > 0">({{ descuentoAplicado }}% dcto.)</span>
+            </span>
+          </span>
+          <button class="btn-renovar" *ngIf="!esPendiente">Renovar ahora →</button>
+          <button class="btn-renovar" *ngIf="esPendiente" style="color:var(--accent);" disabled>Pendiente de pago</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sin membresías activas ni pendientes -->
+    <section class="membresia-activa" *ngIf="!membresiaActiva && historialMembresias.length === 0 && !cargando">
+      <div class="card active-plan" style="background:var(--page);border-color:var(--line);text-align:center;padding:30px;">
+        <i class="ti ti-calendar-off" style="font-size:40px;color:var(--ink-3);display:block;margin-bottom:12px;"></i>
+        <h2 style="font-size:18px;font-weight:600;">Aún no tienes membresías</h2>
+        <p style="color:var(--ink-3);">Reserva un plan mensual o anual desde el mapa.</p>
+        <a routerLink="/cliente/buscar" class="btn-buscar">Buscar estacionamiento</a>
+      </div>
+    </section>
+
+    <!-- Historial de membresías -->
+    <section class="historial-membresias" *ngIf="historialMembresias.length > 0">
+      <h3>Historial de membresías</h3>
+
+      <div class="card historial-card">
+        <div class="list-row" *ngFor="let item of historialMembresias; trackBy: trackById">
+          <div class="l">
+            <i class="ti ti-calendar"></i>
+            <div>
+              <div class="t">{{ getNombrePlan(item.nombrePlan || '') }} · {{ item.codigoEspacio || '—' }}</div>
+              <div class="s">{{ formatearFecha(item.fechaInicio) }} · S/ {{ getTotalReserva(item) }}</div>
+            </div>
+          </div>
+          <span class="badge badge-neutral">{{ getEstadoTexto(item.estado) }}</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
