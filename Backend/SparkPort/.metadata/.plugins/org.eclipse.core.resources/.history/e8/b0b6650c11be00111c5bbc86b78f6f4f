@@ -1,0 +1,230 @@
+package com.parkspot.service;
+
+import com.parkspot.dto.TicketDTO;
+import com.parkspot.entity.Espacio;
+import com.parkspot.entity.Reserva;
+import com.parkspot.entity.Ticket;
+import com.parkspot.entity.Usuario;
+import com.parkspot.repository.EspacioRepository;
+import com.parkspot.repository.ReservaRepository;
+import com.parkspot.repository.TicketRepository;
+import com.parkspot.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+/**
+ * Servicio para la entidad Ticket.
+ * Los tickets se generan automáticamente al confirmar una reserva.
+ */
+@Service
+@Transactional
+public class TicketService {
+
+    @Autowired
+    private TicketRepository repo;
+
+    @Autowired
+    private UsuarioRepository usuarioRepo;
+
+    @Autowired
+    private ReservaRepository reservaRepo;
+
+    @Autowired
+    private EspacioRepository espacioRepo;
+
+    private static final DateTimeFormatter DATE_FORMATTER =  DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    // ==========================================
+    // MÉTODOS CRUD PRINCIPALES
+    // ==========================================
+
+    public TicketDTO buscarPorId(Long id) {
+        Ticket entity = repo.findById(id).orElse(null);
+        return entity != null ? convertirADTO(entity) : null;
+    }
+
+    /**
+     * Busca un ticket por su código (ej. PS-2026-07-28-00123).
+     * Usado por el operador para validar el ticket.
+     */
+    public TicketDTO buscarPorCodigo(String codigo) {
+        Ticket entity = repo.findByCodigo(codigo).orElse(null);
+        return entity != null ? convertirADTO(entity) : null;
+    }
+
+    public TicketDTO buscarPorReserva(Long reservaId) {
+        Ticket entity = repo.findByReservaId(reservaId).orElse(null);
+        return entity != null ? convertirADTO(entity) : null;
+    }
+
+    // ==========================================
+    // MÉTODOS DE NEGOCIO
+    // ==========================================
+
+    /**
+     * Genera un ticket para una reserva confirmada.
+     */
+    public Ticket generarTicket(Reserva reserva, BigDecimal montoPagado) {
+        // Validar que no exista ticket para esta reserva
+        if (repo.existsByReservaId(reserva.getId())) {
+            throw new RuntimeException("Ya existe un ticket para esta reserva.");
+        }
+
+        Ticket ticket = new Ticket();
+        ticket.setReserva(reserva);
+
+        // Generar código: PS-YYYY-MM-DD-XXXXX
+        String codigo = generarCodigoTicket();
+        ticket.setCodigo(codigo);
+
+        // Generar QR (simplificado, en producción usaría una librería como ZXing)
+        ticket.setQrCode("QR_" + codigo);
+
+        ticket.setMontoPagado(montoPagado);
+        ticket.setCobroAdicional(BigDecimal.ZERO);
+
+        return repo.save(ticket);
+    }
+
+    /**
+     * Registra el ingreso físico del vehículo (lo hace el operador).
+     */
+    public TicketDTO registrarIngreso(Long ticketId, Long operadorId) {
+        // 1. Buscar el ticket
+        Ticket ticket = repo.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado con ID: " + ticketId));
+
+        // 2. Validar que no haya ingresado antes
+        if (ticket.getFechaIngresoReal() != null) {
+            throw new RuntimeException("El vehículo ya ingresó.");
+        }
+
+        // 3. Buscar el operador
+        Usuario operador = usuarioRepo.findById(operadorId)
+                .orElseThrow(() -> new RuntimeException("Operador no encontrado con ID: " + operadorId));
+
+        // 4. Registrar ingreso en el ticket
+        ticket.setFechaIngresoReal(LocalDateTime.now());
+        ticket.setOperadorIngreso(operador);
+        repo.save(ticket);
+
+        // 5. Cambiar estado de la reserva a ACTIVA
+        Reserva reserva = ticket.getReserva();
+        reserva.setEstado(Reserva.EstadoReserva.ACTIVA);
+        reservaRepo.save(reserva);
+
+        // 6. Cambiar estado del espacio a OCUPADO
+        Espacio espacio = reserva.getEspacio();
+        espacio.setEstado(Espacio.EstadoEspacio.OCUPADO);
+        espacioRepo.save(espacio);
+
+        return convertirADTO(ticket);
+    }
+    /**
+     * Registra la salida del vehículo a partir del ticketId.
+     * Cambia el estado del espacio a DISPONIBLE y la reserva a FINALIZADA.
+     * Calcula cobro adicional si hay exceso de tiempo.
+     */
+    public TicketDTO registrarSalidaPorTicketId(Long ticketId) {
+        // 1. Buscar ticket
+        Ticket ticket = repo.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado con ID: " + ticketId));
+
+        // 2. Validar que ya haya ingresado
+        if (ticket.getFechaIngresoReal() == null) {
+            throw new RuntimeException("El vehículo no ha ingresado aún.");
+        }
+
+        // 3. Validar que no haya salido ya
+        if (ticket.getFechaSalidaReal() != null) {
+            throw new RuntimeException("El vehículo ya salió.");
+        }
+
+        // 4. Registrar salida
+        LocalDateTime ahora = LocalDateTime.now();
+        ticket.setFechaSalidaReal(ahora);
+
+        // 5. Calcular exceso de tiempo y cobro adicional (solo si es plan POR_HORA)
+        Reserva reserva = ticket.getReserva();
+        BigDecimal cobroAdicional = BigDecimal.ZERO;
+
+        if (reserva.getPlan().getNombre() == Plan.NombrePlan.POR_HORA) {
+            if (ahora.isAfter(reserva.getFechaFin())) {
+                long minutosExtra = java.time.Duration.between(reserva.getFechaFin(), ahora).toMinutes();
+                long horasExtra = (long) Math.ceil(minutosExtra / 60.0);
+                BigDecimal precioHora = reserva.getPlan().getPrecioBase();
+                cobroAdicional = precioHora.multiply(BigDecimal.valueOf(horasExtra));
+            }
+        }
+
+        ticket.setCobroAdicional(cobroAdicional);
+        repo.save(ticket);
+
+        // 6. Cambiar estado del espacio a DISPONIBLE
+        Espacio espacio = reserva.getEspacio();
+        espacio.setEstado(Espacio.EstadoEspacio.DISPONIBLE);
+        espacioRepo.save(espacio);
+
+        // 7. Cambiar estado de la reserva
+        if (cobroAdicional.compareTo(BigDecimal.ZERO) > 0) {
+            reserva.setEstado(Reserva.EstadoReserva.EXCEDIDA);
+        } else {
+            reserva.setEstado(Reserva.EstadoReserva.FINALIZADA);
+        }
+        reservaRepo.save(reserva);
+
+        return convertirADTO(ticket);
+    }
+
+    // ==========================================
+    // MÉTODOS PRIVADOS
+    // ==========================================
+
+    /**
+     * Genera un código único para el ticket.
+     * Formato: PS-YYYY-MM-DD-XXXXX (secuencia numérica)
+     */
+    private String generarCodigoTicket() {
+        String fecha = LocalDateTime.now().format(DATE_FORMATTER);
+
+        // Obtener el último código para generar la secuencia
+        // En producción, usaría una secuencia en la BD o Redis
+        // Para simplificar, usamos timestamp
+        String secuencia = String.format("%05d", System.currentTimeMillis() % 100000);
+
+        return "PS-" + fecha + "-" + secuencia;
+    }
+
+    // ==========================================
+    // MÉTODOS AUXILIARES (Conversión)
+    // ==========================================
+
+    private TicketDTO convertirADTO(Ticket entity) {
+        TicketDTO dto = new TicketDTO();
+        dto.setId(entity.getId());
+        dto.setReservaId(entity.getReserva().getId());
+        dto.setCodigo(entity.getCodigo());
+        dto.setQrCode(entity.getQrCode());
+        dto.setMontoPagado(entity.getMontoPagado());
+
+        dto.setFechaIngresoReal(entity.getFechaIngresoReal());
+        dto.setFechaSalidaReal(entity.getFechaSalidaReal());
+
+        dto.setOperadorIngresoId(entity.getOperadorIngreso() != null ? entity.getOperadorIngreso().getId() : null);
+        dto.setOperadorSalidaId(entity.getOperadorSalida() != null ? entity.getOperadorSalida().getId() : null);
+
+        dto.setCobroAdicional(entity.getCobroAdicional());
+
+        // Datos anidados
+        dto.setNombreUsuario(entity.getReserva().getUsuario().getNombres() + " " +
+                entity.getReserva().getUsuario().getApellidos());
+        dto.setCodigoEspacio(entity.getReserva().getEspacio().getCodigo());
+        dto.setPlacaVehiculo(entity.getReserva().getVehiculo().getPlaca());
+
+        return dto;
+    }
+}

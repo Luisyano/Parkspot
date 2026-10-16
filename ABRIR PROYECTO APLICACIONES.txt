@@ -1,0 +1,106 @@
+¡Perfecto! Te dejo los comandos **exactos** para que puedas guardarlos y usarlos mañana sin problemas.
+
+---
+
+## 📁 **COMANDOS PARA ABRIR EL PROYECTO**
+
+---
+
+### 1️⃣ **ABRIR EL FRONTEND (ANGULAR)**
+
+#### **Paso 1:** Abrir la terminal en la carpeta correcta
+```bash
+cd "C:\Users\Haryan\Downloads\SPARKPORTS_V1\Pagina DAW\Pagina_DAW"
+```
+
+#### **Paso 2:** Iniciar Angular
+ng serve --hmr
+
+#### **Paso 3:** Ver en el navegador
+```
+http://localhost:4200
+```
+
+---
+
+### 2️⃣ **ABRIR EL BACKEND (SPRING BOOT)**
+
+#### **Paso 1:** Abrir **OTRA terminal** (no cerrar la de Angular)
+
+#### **Paso 2:** Ir a la carpeta del backend
+```bash
+cd C:\Users\Haryan\Downloads\SPARKPORT_V2\SPARKPORT_V1\SparkPort\Parkspot
+```
+
+#### **Paso 3:** Iniciar Spring Boot
+```bash
+.\mvnw spring-boot:run
+```
+
+#### **Paso 4:** Verificar que esté corriendo
+Deberías ver:
+```
+Started ParkspotApplication in X seconds
+Tomcat started on port 8090 (http)
+```
+
+---
+
+### 3️⃣ **ABRIR MySQL (BASE DE DATOS)**
+
+#### **Opción A: Desde MySQL Workbench**
+1. Abrir MySQL Workbench
+2. Conectarse a "Local instance"
+3. Ejecutar:
+```sql
+USE parkspot;
+SELECT * FROM usuario;
+```
+
+#### **Opción B: Desde terminal (si tienes MySQL en PATH)**
+```bash
+mysql -u root -p
+```
+Luego:
+```sql
+USE parkspot;
+SELECT * FROM usuario;
+```
+
+---
+
+## 📋 **RESUMEN PARA GUARDAR**
+
+| Servicio | Carpeta | Comando |
+|----------|---------|---------|
+| **Frontend** | `C:\Users\Haryan\Downloads\SPARKPORTS_V1\Pagina DAW\Pagina_DAW` | `ng serve` |
+| **Backend** | `C:\Users\Haryan\Downloads\SPARKPORT_V2\SPARKPORT_V1\SparkPort\Parkspot` | `.\mvnw spring-boot:run` |
+| **Base de datos** | MySQL Workbench | `USE parkspot;` |
+
+---
+
+## ⚠️ **RECORDATORIO IMPORTANTE**
+
+1. **Primero** el backend, **después** el frontend.
+2. Deja **ambas terminales abiertas** mientras trabajas.
+3. Si cierras todo, al abrirlos de nuevo sigue este orden:
+   - **1°** MySQL
+   - **2°** Backend (Spring Boot)
+   - **3°** Frontend (Angular)
+
+---
+
+¡Listo! Mañana solo copias y pegas estos comandos y todo funciona. 🚀
+
+
+
+ng serve --hmr
+
+
+
+
+
+
+npx ng cache clean
+
+ng serve --poll=2000
